@@ -13,7 +13,14 @@ const conversationSchema = new mongoose.Schema({
       ref: 'Message',
       default: []
     }
-  ]
+  ],
+  group: {
+    type: Boolean,
+    default: false
+  },
+  name: {
+    type: String
+  }
 }, { timestamps: true })
 
 const Conversation = mongoose.model('Conversation', conversationSchema)

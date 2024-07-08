@@ -6,11 +6,11 @@ export const signup = async (req, res) => {
   try {
     const { fullName, username, password, confirmPassword, gender } = req.body
     if (password !== confirmPassword) {
-      return res.status(400).json({ err: 'passwords dont match' })
+      return res.status(400).json({ error: 'passwords dont match' })
     }
     const user = await User.findOne({ username })
     if (user) {
-      return res.status(400).json({ err: 'user already exists' })
+      return res.status(400).json({ error: 'user already exists' })
     }
 
     // hash password
@@ -38,11 +38,11 @@ export const signup = async (req, res) => {
         profilePic: newUser.profilePic
       })
     }
-    else res.status(400).json({ err: 'invalid user data' })
+    else res.status(400).json({ error: 'invalid user data' })
   }
-  catch (err) {
-    console.log(err.message)
-    res.status(500).json({ err: 'Internal Server Error' })
+  catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 }
 
@@ -52,7 +52,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ username })
     const isPasswordCorrect = await bcrypt.compare(password, user?.password || '')
     if (!user || !isPasswordCorrect) {
-      return res.status(400).json({ err: 'invalid username or password' })
+      return res.status(400).json({ error: 'invalid username or password' })
     }
     generateTokenAndSetCookie(user._id, res)
     res.status(200).json({
@@ -61,8 +61,8 @@ export const login = async (req, res) => {
       username: user.username,
       profilePic: user.profilePic
     })
-  } catch (err) {
-    res.status(500).json({ err: err.message })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
   }
 }
 
@@ -70,7 +70,7 @@ export const logout = (req, res) => {
   try {
     res.cookie('jwt', '', { maxAge: 0 })
     res.status(200).json({ msg: 'logged out' })
-  } catch (err) {
-    res.status(500).json({ err: err.message })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
   }
 }
