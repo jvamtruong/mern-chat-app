@@ -47,16 +47,20 @@ export const sendMessage = async (req, res) => {
     // SOCKET IO FUNCTIONALITY GOES HERE
 
     if (msgType === 'one-on-one') {
-      const receiverSocketId = getReceiverSocketId(id)
-      if (receiverSocketId) {
+      const receiverSocketIds = getReceiverSocketId(id)
+      if (receiverSocketIds) {
         // io.to(<socket_id>).emit() used to send events to specific client
-        io.to(receiverSocketId).emit("newMessage", newMessage)
+        receiverSocketIds.forEach(socketId => {
+          io.to(socketId).emit("newMessage", newMessage)
+        })
       }
     } else {
       const receiverSocketIds = conversation.participants.map(participant => getReceiverSocketId(participant.toString()))
       for (let i = 0; i < receiverSocketIds.length; i++) {
           if (receiverSocketIds[i]) {
-            io.to(receiverSocketIds[i]).emit("newMessage", newMessage)
+            receiverSocketIds[i].forEach(socketId => {
+              io.to(socketId).emit("newMessage", newMessage)
+            })
           }
         }
     }
