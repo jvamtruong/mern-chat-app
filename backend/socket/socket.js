@@ -38,16 +38,19 @@ io.on("connection", (socket) => {
 	// socket.on() is used to listen to the events. can be used both on client and server side
 	socket.on("disconnect", () => {
 		console.log("user disconnected", socket.id)
-		delete userSocketMap[userId].findIndex((socketId) => socketId === socket.id)
+		const disconnectedSocketId = userSocketMap[userId].findIndex((socketId) => socketId === socket.id)
+    userSocketMap[userId][disconnectedSocketId] = -1 // the socket is disconnected
     const total = userSocketMap[userId].reduce((acc, socketId) => {
-        if (socketId === undefined) {
+        if (socketId === -1) {
           acc++
         }
         return acc
     }, 0)
+    // console.log(`total: ${total} length: ${userSocketMap[userId].length}`)
     if (total === userSocketMap[userId].length) {
-      delete userSocketMap[userId]
+      delete userSocketMap[userId] // remove userId from the map if all the sockets are disconnected
     }
+    // console.log(userSocketMap)
 		io.emit("getOnlineUsers", Object.keys(userSocketMap))
 	})
 })
