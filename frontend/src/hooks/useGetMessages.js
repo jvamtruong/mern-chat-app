@@ -2,11 +2,12 @@ import { useEffect, useState } from "react"
 import useConversation from "../zustand/useConversation"
 import toast from "react-hot-toast"
 
-const useGetMessages = () => {
+const useGetMessages = (selectedConversation) => {
 	const [loading, setLoading] = useState(false)
-	const { messages, setMessages, selectedConversation } = useConversation()
+	const { messages, setMessages } = useConversation()
 
 	useEffect(() => {
+    console.log('Messages effect')
 		const getMessages = async () => {
 			setLoading(true)
 			try {

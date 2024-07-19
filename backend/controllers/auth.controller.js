@@ -41,7 +41,7 @@ export const signup = async (req, res) => {
     else res.status(400).json({ error: 'invalid user data' })
   }
   catch (error) {
-    console.log(error.message)
+    console.log(error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
 }
@@ -62,6 +62,7 @@ export const login = async (req, res) => {
       profilePic: user.profilePic
     })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }
@@ -71,6 +72,7 @@ export const logout = (req, res) => {
     res.cookie('jwt', '', { maxAge: 0 })
     res.status(200).json({ msg: 'logged out' })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }

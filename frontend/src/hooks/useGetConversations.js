@@ -6,6 +6,7 @@ const useGetConversations = () => {
 	const [conversations, setConversations] = useState([])
 
 	useEffect(() => {
+    console.log('sidebar effect')
 		const getConversations = async () => {
 			setLoading(true)
 			try {

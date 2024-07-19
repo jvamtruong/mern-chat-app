@@ -52,6 +52,7 @@ export const sendMessage = async (req, res) => {
         // io.to(<socket_id>).emit() used to send events to specific client
         receiverSocketIds.forEach(socketId => {
           io.to(socketId).emit("newMessage", newMessage)
+          io.to(socketId).emit('newNotification', newMessage)
         })
       }
     } else {
@@ -62,7 +63,7 @@ export const sendMessage = async (req, res) => {
               io.to(socketId).emit("newMessage", newMessage)
             })
           }
-        }
+      }
     }
 	
     res.status(201).json(newMessage)
@@ -97,6 +98,7 @@ export const getMessages = async (req, res) => {
 
     res.status(200).json(conversation.messages)
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }

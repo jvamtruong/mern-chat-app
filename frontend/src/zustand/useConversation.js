@@ -5,6 +5,10 @@ const useConversation = create(set => ({
 	setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
 	messages: [],
 	setMessages: (messages) => set({ messages }),
+  count: 0,
+  setCount: (count) => set({ count }),
+  random: '',
+  setRandom: (random) => set({ random }),
 }))
 
 export default useConversation

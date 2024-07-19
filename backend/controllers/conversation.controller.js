@@ -9,6 +9,7 @@ export const createGroup = async (req, res) => {
     })
     res.status(201).json(newGroup)
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }
@@ -29,6 +30,7 @@ export const addMemberToGroup = async (req, res) => {
     
     res.status(201).json(conversation)
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }
@@ -40,6 +42,7 @@ export const getGroupChats = async (req, res) => {
                                             .populate('participants', { password: 0 })
     res.status(200).json(conversations)
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message })
   }
 }

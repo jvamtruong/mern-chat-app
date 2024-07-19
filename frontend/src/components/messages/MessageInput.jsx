@@ -6,6 +6,8 @@ const MessageInput = () => {
 	const [message, setMessage] = useState("")
 	const { loading, sendMessage } = useSendMessage()
 
+  console.log('message input')
+
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 		if (!message) return

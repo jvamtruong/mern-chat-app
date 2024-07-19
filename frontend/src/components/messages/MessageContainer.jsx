@@ -7,6 +7,7 @@ import { useAuthContext } from "../../context/AuthContext"
 import SearchUserInput from "./SearchUserInput"
 
 const MessageContainer = () => {
+  console.log("MessageContainer")
 	const { selectedConversation, setSelectedConversation } = useConversation()
 
 	// useEffect(() => {
@@ -40,7 +41,7 @@ const MessageContainer = () => {
 					</div>
           {/* only group conversations can add new members */}
           {selectedConversation.group && <SearchUserInput />}
-					<Messages />
+					<Messages selectedConversation={selectedConversation} />
 					<MessageInput />
 				</>
 			)}
@@ -51,6 +52,7 @@ const MessageContainer = () => {
 export default MessageContainer
 
 const NoChatSelected = () => {
+  console.log('NoChatSelected')
 	const { authUser } = useAuthContext();
 	return (
 		<div className='flex items-center justify-center w-full h-full'>

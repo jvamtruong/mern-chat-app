@@ -3,7 +3,7 @@ import { getRandomEmoji } from "../../utils/emojis"
 import Conversation from "./Conversation"
 
 const Conversations = ({ loading, conversations }) => {
-	// const { loading, conversations } = useGetConversations()
+  console.log('Conversations')
 	return (
 		<div className='py-2 flex flex-col overflow-auto'>
 			{conversations.map((conversation, idx) => (
@@ -14,7 +14,6 @@ const Conversations = ({ loading, conversations }) => {
 					lastIdx={idx === conversations.length - 1}
 				/>
 			))}
-
 
 			{loading ? <span className='loading loading-spinner mx-auto'></span> : null}
 		</div>

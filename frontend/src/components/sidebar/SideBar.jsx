@@ -5,6 +5,7 @@ import LogoutButton from "./LogoutButton"
 import SearchInput from "./SearchInput"
 
 const Sidebar = () => {
+  console.log('Sidebar')
   const { conversations, setConversations, loading } = useGetConversations()
   if (loading) {
     return 'Loading...'
