@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: react-ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - mern-networks
+
+  backend:
+    build: ./backend
+    container_name: node-api
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=${PORT}
+      - MONGODB_URL=${MONGODB_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - db
+    networks:
+      - mern-networks
+
+  db:
+    image: mongo:latest
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mern-networks
+
+volumes:
+  mongo-data:
+
+networks:
+  mern-networks:
+    driver: bridge
