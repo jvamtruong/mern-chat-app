@@ -42,6 +42,7 @@ export const sendMessage = async (req, res) => {
       })
     }
     conversation.messages.push(newMessage._id)
+    conversation.unseenMessages = ++conversation.unseenMessages
     await Promise.all([conversation.save(), newMessage.save()]) // run in parrellel 
 
     // SOCKET IO FUNCTIONALITY GOES HERE
@@ -68,7 +69,7 @@ export const sendMessage = async (req, res) => {
 	
     res.status(201).json(newMessage)
   } catch (error) {
-    console.log(error)
+    console.error('error in sendMessage controller', error)
     res.status(500).json({ error: error.message })
   }
 }
@@ -98,7 +99,7 @@ export const getMessages = async (req, res) => {
 
     res.status(200).json(conversation.messages)
   } catch (error) {
-    console.log(error)
+    console.error('error in getMessages controller', error)
     res.status(500).json({ error: error.message })
   }
 }

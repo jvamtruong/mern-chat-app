@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 
 const useGetConversations = () => {
-	const [loading, setLoading] = useState(false)
-	const [conversations, setConversations] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [conversations, setConversations] = useState([])
 
-	useEffect(() => {
+  useEffect(() => {
     console.log('sidebar effect')
-		const getConversations = async () => {
-			setLoading(true)
-			try {
-				let res = await fetch("/api/users") // one on one chat
-				const data1 = await res.json()
+    const getConversations = async () => {
+      setLoading(true)
+      try {
+        let res = await fetch('/api/users') // one on one chat
+        const data1 = await res.json()
 
-				if (data1.error) {
-					throw new Error(data1.error)
-				}
+        if (data1.error) {
+          throw new Error(data1.error)
+        }
         // in progress
         // res = await fetch('/api/groups')
         // data.push(await res.json())
@@ -25,18 +25,18 @@ const useGetConversations = () => {
         if (data2.error) {
           throw new Error(data2.error)
         }
-				setConversations([...data1, ...data2])
-			} catch (error) {
-				toast.error(error.message)
-			} finally {
-				setLoading(false)
-			}
-		}
+        setConversations([...data1, ...data2])
+      } catch (error) {
+        toast.error(error.message)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-		getConversations()
-	}, [])
+    getConversations()
+  }, [])
 
-	return { loading, conversations, setConversations }
+  return { loading, conversations, setConversations }
 }
 
 export default useGetConversations

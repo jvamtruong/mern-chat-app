@@ -10,10 +10,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <>
     <BrowserRouter>
       <AuthContextProvider>
-        <SocketContextProvider> 
+        <SocketContextProvider>
           <App />
         </SocketContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
-  </>,
+  </>
 )

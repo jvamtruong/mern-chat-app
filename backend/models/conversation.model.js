@@ -1,27 +1,26 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 
-const conversationSchema = new mongoose.Schema({
-  participants: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }
-  ],
-  messages: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Message',
-      default: []
-    }
-  ],
-  group: {
-    type: Boolean,
-    default: false
+const conversationSchema = new mongoose.Schema(
+  {
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message',
+        default: [],
+      },
+    ],
+    group: { type: Boolean, default: false },
+    name: { type: String },
+    unseenMessages: { type: Number, default: 0 },
   },
-  name: {
-    type: String
-  }
-}, { timestamps: true })
+  { timestamps: true }
+)
 
 const Conversation = mongoose.model('Conversation', conversationSchema)
 
