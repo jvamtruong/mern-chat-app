@@ -5,15 +5,19 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthContextProvider } from './context/AuthContext.jsx'
 import { SocketContextProvider } from './context/SocketContext.jsx'
+import { Provider } from 'react-redux'
+import store from './redux/store.js'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <>
-    <BrowserRouter>
-      <AuthContextProvider>
-        <SocketContextProvider>
-          <App />
-        </SocketContextProvider>
-      </AuthContextProvider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <AuthContextProvider>
+          <SocketContextProvider>
+            <App />
+          </SocketContextProvider>
+        </AuthContextProvider>
+      </BrowserRouter>
+    </Provider>
   </>
 )

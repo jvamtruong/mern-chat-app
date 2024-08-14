@@ -1,42 +1,41 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useGetAllGroupsQuery } from '../redux/api/conversationApiSlice'
+import { useGetAllUsersQuery } from '../redux/api/userApiSlice'
 
 const useGetConversations = () => {
-  const [loading, setLoading] = useState(false)
   const [conversations, setConversations] = useState([])
 
+  const {
+    data: users,
+    error: userError,
+    isLoading: userLoading
+  } = useGetAllUsersQuery()
+
+  const {
+    data: groups,
+    error: groupError,
+    isLoading: groupLoading
+  } = useGetAllGroupsQuery()
+
   useEffect(() => {
-    console.log('sidebar effect')
-    const getConversations = async () => {
-      setLoading(true)
-      try {
-        let res = await fetch('/api/users') // one on one chat
-        const data1 = await res.json()
-
-        if (data1.error) {
-          throw new Error(data1.error)
-        }
-        // in progress
-        // res = await fetch('/api/groups')
-        // data.push(await res.json())
-        // then sort by modified date
-        res = await fetch('/api/groups')
-        const data2 = await res.json()
-        if (data2.error) {
-          throw new Error(data2.error)
-        }
-        setConversations([...data1, ...data2])
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setLoading(false)
+    try {
+      console.log('sidebar effect')
+      if (userError || groupError) {
+        throw new Error(userError?.data?.message || groupError?.data?.message)
       }
+      setConversations([
+        ...(Array.isArray(users) ? users : []),
+        ...(Array.isArray(groups) ? groups : []),
+      ])
+      // setConversations([...users, ...groups])
+    } catch (error) {
+      console.error(error)
+      toast.error(error.message)
     }
+  }, [userLoading, groupLoading])
 
-    getConversations()
-  }, [])
-
-  return { loading, conversations, setConversations }
+  return { userLoading, groupLoading, conversations, setConversations }
 }
 
 export default useGetConversations

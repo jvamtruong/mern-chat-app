@@ -1,25 +1,30 @@
-import useGetConversations from "../../hooks/useGetConversations"
-import Conversations from "./Conversations"
-import CreateGroupConversationButton from "./CreateGroupConversationButton"
-import LogoutButton from "./LogoutButton"
-import SearchInput from "./SearchInput"
+import useGetConversations from '../../hooks/useGetConversations'
+import Conversations from './Conversations'
+import CreateGroupConversationButton from './CreateGroupConversationButton'
+import LogoutButton from './LogoutButton'
+import SearchInput from './SearchInput'
 
 const Sidebar = () => {
   console.log('Sidebar')
-  const { conversations, setConversations, loading } = useGetConversations()
-  if (loading) {
+  const { conversations, setConversations, userLoading, groupLoading } = useGetConversations()
+
+  if (userLoading || groupLoading) {
     return 'Loading...'
   }
-	return (
-		<div className='border-r border-slate-500 p-4 flex flex-col'>
-			<SearchInput />
-			<div className='divider px-3'></div>
-			<Conversations loading={loading} conversations={conversations}/>
+  
+  return (
+    <div className='border-r border-slate-500 p-4 flex flex-col'>
+      <SearchInput />
       <div className='divider px-3'></div>
-      <CreateGroupConversationButton conversations={conversations} setConversations={setConversations} />
+      <Conversations loading={userLoading & groupLoading} conversations={conversations} />
+      <div className='divider px-3'></div>
+      <CreateGroupConversationButton
+        conversations={conversations}
+        setConversations={setConversations}
+      />
       <LogoutButton />
-		</div>
-	)
+    </div>
+  )
 }
 
 export default Sidebar
