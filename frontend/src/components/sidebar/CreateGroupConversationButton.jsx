@@ -2,7 +2,7 @@ import React from 'react'
 import toast from 'react-hot-toast'
 
 const CreateGroupConversationButton = ({ conversations, setConversations }) => {
-  console.log('create group button')
+  // console.log('create group button')
   const handleOnClick = async () => {
     try {
       const res = await fetch('/api/groups/create', {

@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react'
-import useConversation from '../../zustand/conversationStore'
 import MessageInput from './MessageInput'
 import Messages from './Messages'
 import { TiMessages } from 'react-icons/ti'
 import { useAuthContext } from '../../context/AuthContext'
 import SearchUserInput from './SearchUserInput'
+import useConversationStore from '../../zustand/conversationStore'
 
 const MessageContainer = () => {
   console.log('MessageContainer')
-  const { selectedConversation, setSelectedConversation } = useConversation()
-
-  // useEffect(() => {
-  // 	// cleanup function (unmounts)
-  // 	return () => setSelectedConversation(null)
-  // }, [setSelectedConversation])
+  const { selectedConversation } = useConversationStore()
+  console.log(selectedConversation?.fullName, selectedConversation?._id)
 
   return (
     <div className='md:min-w-[450px] flex flex-col'>
@@ -53,7 +48,7 @@ const MessageContainer = () => {
           </div>
           {/* only group conversations can add new members */}
           {selectedConversation.group && <SearchUserInput />}
-          <Messages selectedConversation={selectedConversation} />
+          <Messages />
           <MessageInput />
         </>
       )}
@@ -64,7 +59,7 @@ const MessageContainer = () => {
 export default MessageContainer
 
 const NoChatSelected = () => {
-  console.log('NoChatSelected')
+  // console.log('NoChatSelected')
   const { authUser } = useAuthContext()
   return (
     <div className='flex items-center justify-center w-full h-full'>

@@ -1,34 +1,31 @@
-import { useEffect, useState } from 'react'
-import useConversation from '../zustand/conversationStore'
+import { useEffect } from 'react'
 import toast from 'react-hot-toast'
+import { useGetMessagesQuery } from '../redux/api/messageApiSlice'
+import useConversationStore from '../zustand/conversationStore'
 
 const useGetMessages = (selectedConversation) => {
-  const [loading, setLoading] = useState(false)
-  const { messages, setMessages } = useConversation()
+  console.log('useGetMessages')
+  const { messages, setMessages } = useConversationStore()
+
+  const { data, error, isLoading } = useGetMessagesQuery({
+    msg_type: selectedConversation?.group ? 'group' : 'one-on-one',
+    conversation_id: selectedConversation?._id,
+  })
+
+  console.log('loading', isLoading)
 
   useEffect(() => {
     console.log('Messages effect')
-    const getMessages = async () => {
-      setLoading(true)
-      try {
-        const msgType = selectedConversation.group ? 'group' : 'one-on-one'
-        const res = await fetch(
-          `/api/messages/${msgType}/${selectedConversation._id}`
-        )
-        const data = await res.json()
-        if (data.error) throw new Error(data.error)
-        setMessages(data)
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setLoading(false)
-      }
+    try {
+      if (error) throw new Error(error.message)
+      if (data) setMessages(data)
+    } catch (error) {
+      console.error(error)
+      toast.error(error.message)
     }
+  }, [data, isLoading])
 
-    if (selectedConversation?._id) getMessages()
-  }, [selectedConversation?._id])
-
-  return { messages, loading }
+  return { messages, isLoading }
 }
 
 export default useGetMessages

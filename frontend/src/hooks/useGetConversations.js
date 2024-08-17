@@ -20,7 +20,7 @@ const useGetConversations = () => {
 
   useEffect(() => {
     try {
-      console.log('sidebar effect')
+      // console.log('sidebar effect')
       if (userError || groupError) {
         throw new Error(userError?.data?.message || groupError?.data?.message)
       }

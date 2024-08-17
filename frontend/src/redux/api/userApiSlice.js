@@ -4,9 +4,7 @@ import { USER_URL } from '../constants'
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: () => ({
-        url: USER_URL,
-      }),
+      query: () => USER_URL
     }),
     
     

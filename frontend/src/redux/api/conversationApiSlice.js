@@ -4,9 +4,7 @@ import { CONVERSATION_URL } from '../constants'
 export const conversationApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllGroups: builder.query({
-      query: () => ({
-        url: CONVERSATION_URL,
-      }),
+      query: () => CONVERSATION_URL,
     }),
     
   })

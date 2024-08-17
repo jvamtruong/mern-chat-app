@@ -84,7 +84,7 @@ export const getMessages = async (req, res) => {
       return res.status(400).json({ msg: 'cannot send messages to yourself' })
     }
 
-    let conversation, messages
+    let conversation
 
     if (type === 'one-on-one') {
       conversation = await Conversation.findOne({
