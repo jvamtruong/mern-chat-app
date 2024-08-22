@@ -1,37 +1,31 @@
-import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAuthContext } from '../context/AuthContext'
+import { useLoginMutation } from '../redux/api/userApiSlice'
 
 const useLogin = () => {
-  const [loading, setLoading] = useState(false)
   const { setAuthUser } = useAuthContext()
+  const [login, { isLoading }] = useLoginMutation()
 
-  const login = async (username, password) => {
+  const loginUser = async ({ username, password }) => {
     const success = handleInputErrors(username, password)
     if (!success) return
-    setLoading(true)
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
-
-      const data = await res.json()
-      if (data.error) {
-        throw new Error(data.error)
+      const data = await login({ username, password }).unwrap()
+      // console.log(data)
+      if (data?.error) {
+        throw new Error(data?.error)
       }
-
-      localStorage.setItem('chat-user', JSON.stringify(data))
-      setAuthUser(data)
+      if (data) {
+        localStorage.setItem('chat-user', JSON.stringify(data))
+        setAuthUser(data)
+      }
     } catch (error) {
+      console.error(error)
       toast.error(error.message)
-    } finally {
-      setLoading(false)
     }
   }
 
-  return { loading, login }
+  return { isLoading, loginUser }
 }
 
 export default useLogin

@@ -15,7 +15,5 @@ export const messageApiSlice = apiSlice.injectEndpoints({
   }),
 })
 
-export const { 
-  useGetUnseenMessagesQuery, 
-  useGetMessagesQuery,
-} = messageApiSlice
+export const { useGetUnseenMessagesQuery, useGetMessagesQuery } =
+  messageApiSlice

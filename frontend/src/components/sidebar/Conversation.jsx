@@ -5,17 +5,19 @@ import { useGetUnseenMessagesQuery } from '../../redux/api/messageApiSlice'
 import useConversationStore from '../../zustand/conversationStore'
 
 const Conversation = ({ conversation, lastIdx, emoji }) => {
+  // console.log('Conversation')
   const { selectedConversation, setSelectedConversation } = useConversationStore()
   const isSelected = selectedConversation?._id === conversation._id
   const { onlineUsers, socket } = useSocketContext()
   const isOnline = onlineUsers.includes(conversation._id)
   const [unseenMessages, setUnseenMessages] = useState(0)
-  const { data, isLoading } = useGetUnseenMessagesQuery(conversation._id)
-  console.log('Conversation')
+  const { data, isFetching } = useGetUnseenMessagesQuery(conversation._id, {
+    refetchOnMountOrArgChange: true,
+  })
 
   useEffect(() => {
-    if (data) setUnseenMessages(data)
-  }, [isLoading])
+    if (!isFetching) setUnseenMessages(data)
+  }, [isFetching])
 
   useEffect(() => {
     // socket?.on("newMessage", (newMessage) => {

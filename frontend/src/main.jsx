@@ -5,12 +5,12 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthContextProvider } from './context/AuthContext.jsx'
 import { SocketContextProvider } from './context/SocketContext.jsx'
-import { Provider } from 'react-redux'
-import store from './redux/store.js'
+import { ApiProvider } from '@reduxjs/toolkit/query/react'
+import { apiSlice } from './redux/api/apiSlice.js'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <>
-    <Provider store={store}>
+    <ApiProvider api={apiSlice}>
       <BrowserRouter>
         <AuthContextProvider>
           <SocketContextProvider>
@@ -18,6 +18,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </SocketContextProvider>
         </AuthContextProvider>
       </BrowserRouter>
-    </Provider>
+    </ApiProvider>
   </>
 )

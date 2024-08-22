@@ -6,34 +6,36 @@ import { useGetAllUsersQuery } from '../redux/api/userApiSlice'
 const useGetConversations = () => {
   const [conversations, setConversations] = useState([])
 
-  const {
-    data: users,
-    error: userError,
-    isLoading: userLoading
-  } = useGetAllUsersQuery()
-
-  const {
-    data: groups,
-    error: groupError,
-    isLoading: groupLoading
-  } = useGetAllGroupsQuery()
+  const { data: users, isLoading: userLoading } = useGetAllUsersQuery(null, {
+    refetchOnMountOrArgChange: true,
+  })
+  
+  const { data: groups, isLoading: groupLoading } = useGetAllGroupsQuery(null, {
+    refetchOnMountOrArgChange: true,
+  })
 
   useEffect(() => {
     try {
       // console.log('sidebar effect')
-      if (userError || groupError) {
-        throw new Error(userError?.data?.message || groupError?.data?.message)
+      // if (userError || groupError) {
+      //   throw new Error(userError?.data?.message || groupError?.data?.message)
+      // }
+      if (users?.error || groups?.error) {
+        throw new Error(users?.error || groups?.error)
       }
-      setConversations([
-        ...(Array.isArray(users) ? users : []),
-        ...(Array.isArray(groups) ? groups : []),
-      ])
+      if (users && groups) {
+        setConversations([...users, ...groups])
+      }
+      // setConversations([
+      //   ...(Array.isArray(users) ? users : []),
+      //   ...(Array.isArray(groups) ? groups : []),
+      // ])
       // setConversations([...users, ...groups])
     } catch (error) {
       console.error(error)
       toast.error(error.message)
     }
-  }, [userLoading, groupLoading])
+  }, [users, groups])
 
   return { userLoading, groupLoading, conversations, setConversations }
 }

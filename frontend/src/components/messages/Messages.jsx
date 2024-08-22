@@ -6,9 +6,9 @@ import useListenMessages from '../../hooks/useListenMessages'
 import useConversationStore from '../../zustand/conversationStore'
 
 const Messages = () => {
-  console.log('Messages')
-  const { selectedConversation } = useConversationStore()
-  const { messages, isLoading } = useGetMessages(selectedConversation)
+  // console.log('Messages')
+  const { messages, selectedConversation } = useConversationStore()
+  const { isLoading } = useGetMessages(selectedConversation)
   useListenMessages(selectedConversation)
   const lastMessageRef = useRef()
 

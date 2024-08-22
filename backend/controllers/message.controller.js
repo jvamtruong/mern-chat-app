@@ -81,7 +81,7 @@ export const getMessages = async (req, res) => {
 
     //if (userToChatId == senderId) return res.status(400).json({ msg: 'cannot send messages to yourself' })
     if (id === senderId.toString()) {
-      return res.status(400).json({ msg: 'cannot send messages to yourself' })
+      return res.status(400).json({ error: 'cannot send messages to yourself' })
     }
 
     let conversation

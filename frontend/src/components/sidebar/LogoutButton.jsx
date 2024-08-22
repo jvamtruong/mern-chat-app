@@ -3,14 +3,14 @@ import useLogout from '../../hooks/useLogout'
 
 const LogoutButton = () => {
   // console.log('LogoutButton')
-  const { loading, logout } = useLogout()
+  const { isLoading, logoutUser } = useLogout()
 
   return (
-    <div className='mt-auto'>
-      {!loading ? (
+    <div className='mt-auto flex justify-end w-full'>
+      {!isLoading ? (
         <BiLogOut
-          className='w-6 h-6 text-white cursor-pointer'
-          onClick={logout}
+          className='w-6 h-6 text-white cursor-pointer mr-4'
+          onClick={logoutUser}
         />
       ) : (
         <span className='loading loading-spinner'></span>

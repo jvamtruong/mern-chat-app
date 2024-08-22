@@ -1,8 +1,10 @@
 import useGetConversations from '../../hooks/useGetConversations'
+import Profile from '../Profile'
 import Conversations from './Conversations'
 import CreateGroupConversationButton from './CreateGroupConversationButton'
 import LogoutButton from './LogoutButton'
 import SearchInput from './SearchInput'
+
 
 const Sidebar = () => {
   // console.log('Sidebar')
@@ -23,6 +25,8 @@ const Sidebar = () => {
         conversations={conversations}
         setConversations={setConversations}
       />
+      <div className='divider px-3'></div>
+      <Profile />
       <LogoutButton />
     </div>
   )

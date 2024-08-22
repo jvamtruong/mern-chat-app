@@ -6,11 +6,11 @@ const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const { loading, login } = useLogin()
+  const { isLoading, loginUser } = useLogin()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await login(username, password)
+    await loginUser({ username, password })
   }
 
   return (
@@ -55,8 +55,8 @@ const Login = () => {
           </Link>
 
           <div>
-            <button className='btn btn-block btn-sm mt-2' disabled={loading}>
-              {loading ? (
+            <button className='btn btn-block btn-sm mt-2' disabled={isLoading}>
+              {isLoading ? (
                 <span className='loading loading-spinner '></span>
               ) : (
                 'Login'
