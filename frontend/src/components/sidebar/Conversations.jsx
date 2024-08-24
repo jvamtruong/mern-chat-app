@@ -8,7 +8,7 @@ const Conversations = ({ isLoading, conversations }) => {
 		<div className='py-2 flex flex-col overflow-auto'>
 			{conversations.map((conversation, idx) => (
 				<Conversation
-					key={conversation._id}
+					key={conversation?._id || conversation?.user?._id}
 					conversation={conversation}
 					emoji={getRandomEmoji()}
 					lastIdx={idx === conversations.length - 1}

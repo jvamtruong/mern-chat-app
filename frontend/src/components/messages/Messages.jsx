@@ -3,15 +3,14 @@ import useGetMessages from '../../hooks/useGetMessages'
 import MessageSkeleton from '../skeletons/MessageSkeleton'
 import Message from './Message'
 import useListenMessages from '../../hooks/useListenMessages'
-import useConversationStore from '../../zustand/conversationStore'
+import useStore from '../../zustand/store'
 
 const Messages = () => {
   // console.log('Messages')
-  const { messages, selectedConversation } = useConversationStore()
+  const { messages, selectedConversation } = useStore()
   const { isLoading } = useGetMessages(selectedConversation)
   useListenMessages(selectedConversation)
   const lastMessageRef = useRef()
-
 
   useEffect(() => {
     setTimeout(() => {
@@ -23,7 +22,7 @@ const Messages = () => {
     <div className='px-4 flex-1 overflow-auto'>
       {!isLoading &&
         messages?.length > 0 &&
-        messages.map((message) => (
+        messages?.map((message) => (
           <div key={message._id} ref={lastMessageRef}>
             <Message message={message} />
           </div>

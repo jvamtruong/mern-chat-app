@@ -9,15 +9,13 @@ import { ApiProvider } from '@reduxjs/toolkit/query/react'
 import { apiSlice } from './redux/api/apiSlice.js'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <>
+  <BrowserRouter>
     <ApiProvider api={apiSlice}>
-      <BrowserRouter>
-        <AuthContextProvider>
-          <SocketContextProvider>
-            <App />
-          </SocketContextProvider>
-        </AuthContextProvider>
-      </BrowserRouter>
+      <AuthContextProvider>
+        <SocketContextProvider>
+          <App />
+        </SocketContextProvider>
+      </AuthContextProvider>
     </ApiProvider>
-  </>
+  </BrowserRouter>
 )

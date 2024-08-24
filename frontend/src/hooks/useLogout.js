@@ -1,11 +1,11 @@
 import { useAuthContext } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 import { useLogoutMutation } from '../redux/api/userApiSlice'
-import useConversationStore from '../zustand/conversationStore'
+import useStore from '../zustand/store'
 
 const useLogout = () => {
   const { setAuthUser } = useAuthContext()
-  const { setSelectedConversation } = useConversationStore()
+  const { setSelectedConversation } = useStore()
   const [logout, { isLoading }] = useLogoutMutation()
 
   const logoutUser = async () => {

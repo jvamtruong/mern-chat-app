@@ -5,7 +5,7 @@ import useSendMessage from '../../hooks/useSendMessage'
 const MessageInput = () => {
   // console.log('message input')
   const [message, setMessage] = useState('')
-  const { loading, sendMessage } = useSendMessage()
+  const { isLoading, sendMessage } = useSendMessage()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -28,7 +28,7 @@ const MessageInput = () => {
           type='submit'
           className='absolute inset-y-0 end-0 flex items-center pe-3'
         >
-          {loading ? (
+          {isLoading ? (
             <div className='loading loading-spinner'></div>
           ) : (
             <BsSend />

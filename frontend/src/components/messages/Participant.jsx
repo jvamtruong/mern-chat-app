@@ -1,6 +1,6 @@
 import React from 'react'
 import toast from 'react-hot-toast'
-import useConversation from '../../zustand/conversationStore'
+import useConversation from '../../zustand/store'
 import { useAuthContext } from '../../context/AuthContext'
 
 const Participant = ({ participant }) => {

@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useGetMessagesQuery } from '../redux/api/messageApiSlice'
-import useConversationStore from '../zustand/conversationStore'
+import useStore from '../zustand/store'
 
 const useGetMessages = (selectedConversation) => {
   // console.log('useGetMessages')
-  const { setMessages } = useConversationStore()
+  const { setMessages } = useStore()
 
   const { data, isLoading } = useGetMessagesQuery(
     {

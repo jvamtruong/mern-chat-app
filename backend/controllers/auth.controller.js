@@ -4,13 +4,10 @@ import generateTokenAndSetCookie from '../utils/generateToken.js'
 
 export const signup = async (req, res) => {
   try {
-    const { fullName, username, password, confirmPassword, gender } = req.body
-    if (password !== confirmPassword) {
-      return res.status(400).json({ error: 'passwords dont match' })
-    }
+    const { fullName, username, password, gender } = req.body
     const user = await User.findOne({ username })
     if (user) {
-      return res.status(400).json({ error: 'user already exists' })
+      return res.json({ error: 'user already exists' })
     }
 
     // hash password
@@ -53,7 +50,7 @@ export const login = async (req, res) => {
       user?.password || ''
     )
     if (!user || !isPasswordCorrect) {
-      console.error('Invalid username or password')
+      console.error('invalid username or password')
       return res.json({ error: 'invalid username or password' })
     }
     generateTokenAndSetCookie(user._id, res)

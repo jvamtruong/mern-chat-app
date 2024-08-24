@@ -9,7 +9,7 @@ const useGetConversations = () => {
   const { data: users, isLoading: userLoading } = useGetAllUsersQuery(null, {
     refetchOnMountOrArgChange: true,
   })
-  
+
   const { data: groups, isLoading: groupLoading } = useGetAllGroupsQuery(null, {
     refetchOnMountOrArgChange: true,
   })
@@ -17,20 +17,18 @@ const useGetConversations = () => {
   useEffect(() => {
     try {
       // console.log('sidebar effect')
-      // if (userError || groupError) {
-      //   throw new Error(userError?.data?.message || groupError?.data?.message)
-      // }
       if (users?.error || groups?.error) {
         throw new Error(users?.error || groups?.error)
       }
       if (users && groups) {
-        setConversations([...users, ...groups])
+        const sorted = [...users, ...groups].sort((a, b) => {
+          return (
+            new Date(b?.conversation?.updatedAt || b?.updatedAt) -
+            new Date(a?.conversation?.updatedAt || a?.updatedAt)
+          )
+        })
+        setConversations(sorted)
       }
-      // setConversations([
-      //   ...(Array.isArray(users) ? users : []),
-      //   ...(Array.isArray(groups) ? groups : []),
-      // ])
-      // setConversations([...users, ...groups])
     } catch (error) {
       console.error(error)
       toast.error(error.message)
