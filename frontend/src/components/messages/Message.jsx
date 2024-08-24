@@ -1,11 +1,9 @@
-import { useAuthContext } from '../../context/AuthContext'
 import { extractTime } from '../../utils/extractTime'
-import useConversation from '../../zustand/store'
+import useStore from '../../zustand/store'
 
 const Message = ({ message }) => {
   // console.log('Message')
-  const { authUser } = useAuthContext()
-  const { selectedConversation } = useConversation()
+  const { authUser, selectedConversation } = useStore()
   const fromMe = message.senderId === authUser._id
   const formattedTime = extractTime(message.createdAt)
   const chatClassName = fromMe ? 'chat-end' : 'chat-start'

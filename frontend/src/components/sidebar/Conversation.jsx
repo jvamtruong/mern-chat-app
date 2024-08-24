@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react'
 import { useSocketContext } from '../../context/SocketContext'
 import notificationSound from '../../assets/sounds/notification.mp3'
 import { useGetUnseenMessagesQuery } from '../../redux/api/messageApiSlice'
-import useConversationStore from '../../zustand/store'
+import useStore from '../../zustand/store'
 
 const Conversation = ({ conversation, lastIdx, emoji }) => {
   // console.log('Conversation')
-  const { selectedConversation, setSelectedConversation } =
-    useConversationStore()
-  const isSelected =
-    selectedConversation?._id === (conversation?._id || conversation?.user?._id)
+  const { selectedConversation, setSelectedConversation } = useStore()
+  const isSelected = selectedConversation?._id === (conversation?._id || conversation?.user?._id)
   const { onlineUsers, socket } = useSocketContext()
   const isOnline = onlineUsers.includes(conversation?.user?._id)
   const [unseenMessages, setUnseenMessages] = useState(0)

@@ -1,9 +1,9 @@
 import toast from 'react-hot-toast'
-import { useAuthContext } from '../context/AuthContext'
 import { useSignupMutation } from '../redux/api/userApiSlice'
+import useStore from '../zustand/store'
 
 const useSignup = () => {
-  const { setAuthUser } = useAuthContext()
+  const { setAuthUser } = useStore()
   const [signup, { isLoading }] = useSignupMutation()
 
   const signUpUser = async ({ fullName, username, password, confirmPassword, gender }) => {

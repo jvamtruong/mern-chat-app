@@ -1,7 +1,6 @@
 import MessageInput from './MessageInput'
 import Messages from './Messages'
 import { TiMessages } from 'react-icons/ti'
-import { useAuthContext } from '../../context/AuthContext'
 import SearchUserInput from './SearchUserInput'
 import useStore from '../../zustand/store'
 
@@ -60,7 +59,7 @@ export default MessageContainer
 
 const NoChatSelected = () => {
   // console.log('NoChatSelected')
-  const { authUser } = useAuthContext()
+  const { authUser } = useStore()
 
   return (
     <div className='flex items-center justify-center w-full h-full'>

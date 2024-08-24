@@ -1,8 +1,8 @@
 import React from 'react'
-import { useAuthContext } from '../context/AuthContext'
+import useStore from '../zustand/store'
 
 const Profile = () => {
-  const { authUser } = useAuthContext()
+  const { authUser } = useStore()
 
   return (
     <h2 className='font-semibold text-center'>

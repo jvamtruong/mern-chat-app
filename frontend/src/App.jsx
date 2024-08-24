@@ -3,10 +3,10 @@ import Home from './pages/home/Home'
 import Login from './pages/login/Login'
 import SignUp from './pages/signup/SignUp'
 import { Toaster } from 'react-hot-toast'
-import { useAuthContext } from './context/AuthContext'
+import useStore from './zustand/store'
 
 const App = () => {
-  const { authUser } = useAuthContext()
+  const { authUser } = useStore()
 
   return (
     <div className='p-4 h-screen flex items-center justify-center'>
