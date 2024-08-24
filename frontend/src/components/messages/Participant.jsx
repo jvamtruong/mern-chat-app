@@ -1,11 +1,13 @@
 import React from 'react'
 import toast from 'react-hot-toast'
-import useConversation from '../../zustand/store'
-import { useAuthContext } from '../../context/AuthContext'
+import useStore from '../../zustand/store'
 
 const Participant = ({ participant }) => {
-  const { selectedConversation, setSelectedConversation } = useConversation()
-  const { authUser } = useAuthContext()
+  const { 
+    selectedConversation, 
+    setSelectedConversation, 
+    authUser 
+  } = useStore()
 
   const handleClick = async () => {
     try {

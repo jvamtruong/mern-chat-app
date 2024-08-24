@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react'
-import { useAuthContext } from './AuthContext'
 import io from 'socket.io-client'
+import useStore from '../zustand/store'
 
 const SocketContext = createContext()
 
@@ -11,7 +11,7 @@ export const useSocketContext = () => {
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null)
   const [onlineUsers, setOnlineUsers] = useState([])
-  const { authUser } = useAuthContext()
+  const { authUser } = useStore()
 
   useEffect(() => {
     if (authUser) {
