@@ -7,7 +7,7 @@ const useGetMessages = (selectedConversation) => {
   // console.log('useGetMessages')
   const { setMessages } = useStore()
 
-  const { data, isLoading } = useGetMessagesQuery(
+  const { data, isFetching } = useGetMessagesQuery(
     {
       msg_type: selectedConversation?.group ? 'group' : 'one-on-one',
       conversation_id: selectedConversation?._id,
@@ -20,14 +20,14 @@ const useGetMessages = (selectedConversation) => {
   useEffect(() => {
     // console.log('Messages effect')
     try {
-      if (data) setMessages(data)
+      if (!isFetching) setMessages(data)
     } catch (error) {
       console.error(error)
       toast.error(error.message)
     }
-  }, [data])
+  }, [isFetching])
 
-  return { isLoading }
+  return { isFetching }
 }
 
 export default useGetMessages

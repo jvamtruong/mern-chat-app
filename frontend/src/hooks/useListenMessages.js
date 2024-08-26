@@ -8,19 +8,17 @@ const useListenMessages = (selectedConversation) => {
   const { messages, setMessages } = useStore()
 
   useEffect(() => {
-    // console.log('Messages socket effect')
+    console.log('Messages socket effect')
     socket?.on('newMessage', (newMessage) => {
       newMessage.shouldShake = true
       const sound = new Audio(notificationSound)
       sound.play()
       if (
-        newMessage.senderId.toString() === selectedConversation._id.toString()
+        newMessage.senderId === selectedConversation?._id
       ) {
         setMessages([...messages, newMessage])
       }
     })
-
-    return () => socket?.off('newMessage')
   }, [socket, messages])
 }
 

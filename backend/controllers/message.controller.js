@@ -24,11 +24,6 @@ export const sendMessage = async (req, res) => {
         receiverId: [id],
         message,
       })
-      const receiverSocketId = getReceiverSocketId(id)
-      if (receiverSocketId) {
-        // io.to(<socket_id>).emit() used to send events to specific client
-        io.to(receiverSocketId).emit('newMessage', newMessage)
-      }
     } else {
       conversation = await Conversation.findById(id)
       if (!conversation) {
@@ -42,9 +37,10 @@ export const sendMessage = async (req, res) => {
         message,
       })
     }
+    await newMessage.save()
     conversation.messages.push(newMessage._id)
     conversation.unseenMessages = ++conversation.unseenMessages
-    await Promise.all([conversation.save(), newMessage.save()]) // run in parrellel
+    await conversation.save()
 
     // SOCKET IO FUNCTIONALITY GOES HERE
 

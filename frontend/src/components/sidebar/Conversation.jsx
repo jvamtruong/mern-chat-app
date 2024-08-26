@@ -6,7 +6,7 @@ import useStore from '../../zustand/store'
 
 const Conversation = ({ conversation, lastIdx, emoji }) => {
   // console.log('Conversation')
-  const { selectedConversation, setSelectedConversation } = useStore()
+  const { selectedConversation, setSelectedConversation, messages } = useStore()
   const isSelected = selectedConversation?._id === (conversation?._id || conversation?.user?._id)
   const { onlineUsers, socket } = useSocketContext()
   const isOnline = onlineUsers.includes(conversation?.user?._id)
@@ -21,24 +21,13 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
   }, [isFetching])
 
   useEffect(() => {
-    // socket?.on("newMessage", (newMessage) => {
-    //   if (newMessage.senderId.toString() === conversation._id.toString()) {
-    //     // const sound = new Audio(notificationSound)
-    // 	  // sound.play()
-    //     setUnseenMessages(unseenMessages + 1)
-    //   }
-    // })
-    // console.log('conv effect')
     socket?.on('newNotification', (newMessage) => {
-      if (newMessage.senderId.toString() === conversation._id.toString()) {
-        // const sound = new Audio(notificationSound)
-        // sound.play()
+      if (newMessage.senderId === conversation?.user?._id) {
         setUnseenMessages(unseenMessages + 1)
       }
     })
 
-    return () => socket?.off('newMessage')
-  })
+  }, [socket, messages])
 
   return (
     <>

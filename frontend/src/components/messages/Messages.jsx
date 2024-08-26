@@ -8,11 +8,12 @@ import useStore from '../../zustand/store'
 const Messages = () => {
   // console.log('Messages')
   const { messages, selectedConversation } = useStore()
-  const { isLoading } = useGetMessages(selectedConversation)
+  const { isFetching } = useGetMessages(selectedConversation)
   useListenMessages(selectedConversation)
   const lastMessageRef = useRef()
 
   useEffect(() => {
+    console.log('debug', messages)
     setTimeout(() => {
       lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, 100)
@@ -20,7 +21,7 @@ const Messages = () => {
 
   return (
     <div className='px-4 flex-1 overflow-auto'>
-      {!isLoading &&
+      {!isFetching &&
         messages?.length > 0 &&
         messages?.map((message) => (
           <div key={message._id} ref={lastMessageRef}>
@@ -28,9 +29,9 @@ const Messages = () => {
           </div>
         ))}
 
-      {isLoading &&
+      {isFetching &&
         [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
-      {!isLoading && messages?.length === 0 && (
+      {!isFetching && messages?.length === 0 && (
         <p className='text-center'>Send a message to start the conversation</p>
       )}
     </div>
