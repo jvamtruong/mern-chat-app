@@ -4,8 +4,8 @@ import { useGetMessagesQuery } from '../redux/api/messageApiSlice'
 import useStore from '../zustand/store'
 
 const useGetMessages = (selectedConversation) => {
-  // console.log('useGetMessages')
-  const { setMessages } = useStore()
+  console.log('useGetMessages')
+  const { messages, setMessages } = useStore()
 
   const { data, isFetching } = useGetMessagesQuery(
     {
@@ -15,10 +15,11 @@ const useGetMessages = (selectedConversation) => {
     { refetchOnMountOrArgChange: true }
   )
 
-  // console.log('loading', isLoading)
+  console.log('isFetching', isFetching)
+  console.log('data', data)
 
   useEffect(() => {
-    // console.log('Messages effect')
+    console.log('Messages effect')
     try {
       if (!isFetching) setMessages(data)
     } catch (error) {
@@ -27,7 +28,7 @@ const useGetMessages = (selectedConversation) => {
     }
   }, [isFetching])
 
-  return { isFetching }
+  return { isFetching, messages }
 }
 
 export default useGetMessages

@@ -6,14 +6,15 @@ import useListenMessages from '../../hooks/useListenMessages'
 import useStore from '../../zustand/store'
 
 const Messages = () => {
-  // console.log('Messages')
-  const { messages, selectedConversation } = useStore()
-  const { isFetching } = useGetMessages(selectedConversation)
+  console.log('RENDER')
+  const { selectedConversation } = useStore()
+  const { isFetching, messages } = useGetMessages(selectedConversation)
+  console.log(selectedConversation.fullName)
   useListenMessages(selectedConversation)
   const lastMessageRef = useRef()
 
   useEffect(() => {
-    console.log('debug', messages)
+    console.log('last effect', messages)
     setTimeout(() => {
       lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, 100)

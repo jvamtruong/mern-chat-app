@@ -4,7 +4,7 @@ import notificationSound from '../../assets/sounds/notification.mp3'
 import { useGetUnseenMessagesQuery } from '../../redux/api/messageApiSlice'
 import useStore from '../../zustand/store'
 
-const Conversation = ({ conversation, lastIdx, emoji }) => {
+const Conversation = ({ conversation, lastIdx }) => {
   // console.log('Conversation')
   const { selectedConversation, setSelectedConversation, messages } = useStore()
   const isSelected = selectedConversation?._id === (conversation?._id || conversation?.user?._id)
@@ -21,13 +21,20 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
   }, [isFetching])
 
   useEffect(() => {
+    console.log('Conversation effect')
     socket?.on('newNotification', (newMessage) => {
+      console.log('newNotification')
       if (newMessage.senderId === conversation?.user?._id) {
-        setUnseenMessages(unseenMessages + 1)
+        const sound = new Audio(notificationSound)
+        sound.play()
+        setUnseenMessages(prev => prev + 1)
       }
     })
 
-  }, [socket, messages])
+    return () => {
+      socket?.removeAllListeners('newNotification')
+    }
+  }, [socket])
 
   return (
     <>
