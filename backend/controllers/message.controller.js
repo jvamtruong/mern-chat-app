@@ -37,10 +37,10 @@ export const sendMessage = async (req, res) => {
         message,
       })
     }
-    await newMessage.save()
+  
     conversation.messages.push(newMessage._id)
     conversation.unseenMessages = ++conversation.unseenMessages
-    await conversation.save()
+    await Promise.all([newMessage.save(), conversation.save()])
 
     // SOCKET IO FUNCTIONALITY GOES HERE
 
