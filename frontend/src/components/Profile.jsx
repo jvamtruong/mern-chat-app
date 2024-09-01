@@ -2,6 +2,7 @@ import React from 'react'
 import useStore from '../zustand/store'
 
 const Profile = () => {
+  console.log('Profile')
   const { authUser } = useStore()
 
   return (

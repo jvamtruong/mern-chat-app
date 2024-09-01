@@ -1,8 +1,11 @@
 import React from 'react'
 import toast from 'react-hot-toast'
+import useStore from '../../zustand/store'
 
-const CreateGroupConversationButton = ({ conversations, setConversations }) => {
-  // console.log('create group button')
+const CreateGroupConversationButton = () => {
+  console.log('CreateGroupConversationButton')
+  const { conversations, setConversations } = useStore()
+  
   const handleOnClick = async () => {
     try {
       const res = await fetch('/api/groups/create', {

@@ -22,9 +22,9 @@ const Conversation = ({ conversation, lastIdx }) => {
 
   useEffect(() => {
     console.log('Conversation effect')
-    socket?.on('newNotification', (newMessage) => {
-      console.log('newNotification')
-      if (newMessage.senderId === conversation?.user?._id) {
+    socket?.on('unseenMessages', (senderId) => {
+      console.log('unseenMessages')
+      if (senderId === conversation?.user?._id) {
         const sound = new Audio(notificationSound)
         sound.play()
         setUnseenMessages(prev => prev + 1)
@@ -32,7 +32,7 @@ const Conversation = ({ conversation, lastIdx }) => {
     })
 
     return () => {
-      socket?.removeAllListeners('newNotification')
+      socket?.removeAllListeners('unseenMessages')
     }
   }, [socket])
 

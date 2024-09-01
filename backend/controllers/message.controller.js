@@ -37,7 +37,7 @@ export const sendMessage = async (req, res) => {
         message,
       })
     }
-  
+
     conversation.messages.push(newMessage._id)
     conversation.unseenMessages = ++conversation.unseenMessages
     await Promise.all([newMessage.save(), conversation.save()])
@@ -50,12 +50,13 @@ export const sendMessage = async (req, res) => {
         // io.to(<socket_id>).emit() used to send events to specific client
         receiverSocketIds.forEach((socketId) => {
           io.to(socketId).emit('newMessage', newMessage)
-          io.to(socketId).emit('newNotification', newMessage)
+          io.to(socketId).emit('unseenMessages', newMessage.senderId)
+          io.to(socketId).emit('latestConversation', conversation)
         })
       }
     } else {
-      const receiverSocketIds = conversation.participants.map((participant) =>
-        getReceiverSocketId(participant.toString())
+      const receiverSocketIds = conversation.participants.map(
+        (participant) => getReceiverSocketId(participant.toString())
       )
       for (let i = 0; i < receiverSocketIds.length; i++) {
         if (receiverSocketIds[i]) {
