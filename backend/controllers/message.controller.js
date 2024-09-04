@@ -58,13 +58,15 @@ export const sendMessage = async (req, res) => {
       const receiverSocketIds = conversation.participants.map(
         (participant) => getReceiverSocketId(participant.toString())
       )
-      for (let i = 0; i < receiverSocketIds.length; i++) {
-        if (receiverSocketIds[i]) {
-          receiverSocketIds[i].forEach((socketId) => {
+      receiverSocketIds.forEach((receiverSocketId) => {
+        if (receiverSocketId) {
+          receiverSocketId.forEach((socketId) => {
             io.to(socketId).emit('newMessage', newMessage)
+            io.to(socketId).emit('unseenMessages', newMessage.senderId)
+            io.to(socketId).emit('latestConversation', conversation)
           })
         }
-      }
+      })
     }
 
     res.status(201).json(newMessage)

@@ -4,8 +4,8 @@ import { apiSlice } from './apiSlice'
 export const messageApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUnseenMessages: builder.query({
-      query: (conversation_id) =>
-        `${CONVERSATION_URL}/unseen/${conversation_id}`,
+      query: (id) =>
+        `${CONVERSATION_URL}/unseen/${id}`,
     }),
 
     getMessages: builder.query({

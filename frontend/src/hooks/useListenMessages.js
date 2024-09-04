@@ -18,7 +18,18 @@ const useListenMessages = (selectedConversation) => {
       console.log('messages', messages)
       console.log('newMessage', newMessage)
       console.log('selectedConversation', selectedConversation)
-      if (newMessage.senderId === selectedConversation?._id) {
+      // if (
+      //   newMessage.senderId === selectedConversation?._id ||
+      //   selectedConversation?.participants?.some(
+      //     (participant) => participant._id === newMessage.senderId
+      //   )
+      // ) {
+      //   setMessages([...messages, newMessage])
+      // }
+      if (
+        selectedConversation?.messages?.includes(newMessage) ||
+        newMessage.senderId === selectedConversation?._id
+      ) {
         setMessages([...messages, newMessage])
       }
     })
@@ -27,7 +38,6 @@ const useListenMessages = (selectedConversation) => {
       socket?.removeAllListeners('newMessage')
     }
   }, [socket, messages])
-
 }
 
 export default useListenMessages

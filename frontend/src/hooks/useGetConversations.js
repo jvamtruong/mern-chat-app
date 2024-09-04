@@ -12,9 +12,21 @@ const useGetConversations = () => {
     refetchOnMountOrArgChange: true,
   })
 
-  const { data: groups, isFetching: groupLoading } = useGetAllGroupsQuery(null, {
-    refetchOnMountOrArgChange: true,
-  })
+  const { data: groups, isFetching: groupLoading } = useGetAllGroupsQuery(
+    null,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  )
+
+  // users = [
+  //   {
+  //     user,
+  //     conversation
+  //   }
+  // ]
+
+  // groups = [{ conversation }]
 
   console.log('userLoading', userLoading)
   console.log('groupLoading', groupLoading)
