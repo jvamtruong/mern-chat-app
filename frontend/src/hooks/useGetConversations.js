@@ -1,42 +1,41 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useGetAllGroupsQuery } from '../redux/api/conversationApiSlice'
+import { useGetAllUsersQuery } from '../redux/api/userApiSlice'
 
 const useGetConversations = () => {
-  const [loading, setLoading] = useState(false)
   const [conversations, setConversations] = useState([])
 
+  const { data: users, isLoading: userLoading } = useGetAllUsersQuery(null, {
+    refetchOnMountOrArgChange: true,
+  })
+
+  const { data: groups, isLoading: groupLoading } = useGetAllGroupsQuery(null, {
+    refetchOnMountOrArgChange: true,
+  })
+
   useEffect(() => {
-    console.log('sidebar effect')
-    const getConversations = async () => {
-      setLoading(true)
-      try {
-        let res = await fetch('/api/users') // one on one chat
-        const data1 = await res.json()
-
-        if (data1.error) {
-          throw new Error(data1.error)
-        }
-        // in progress
-        // res = await fetch('/api/groups')
-        // data.push(await res.json())
-        // then sort by modified date
-        res = await fetch('/api/groups')
-        const data2 = await res.json()
-        if (data2.error) {
-          throw new Error(data2.error)
-        }
-        setConversations([...data1, ...data2])
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setLoading(false)
+    try {
+      // console.log('sidebar effect')
+      if (users?.error || groups?.error) {
+        throw new Error(users?.error || groups?.error)
       }
+      if (users && groups) {
+        const sorted = [...users, ...groups].sort((a, b) => {
+          return (
+            new Date(b?.conversation?.updatedAt || b?.updatedAt) -
+            new Date(a?.conversation?.updatedAt || a?.updatedAt)
+          )
+        })
+        setConversations(sorted)
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error(error.message)
     }
+  }, [users, groups])
 
-    getConversations()
-  }, [])
-
-  return { loading, conversations, setConversations }
+  return { userLoading, groupLoading, conversations, setConversations }
 }
 
 export default useGetConversations

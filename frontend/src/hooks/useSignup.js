@@ -1,12 +1,12 @@
-import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAuthContext } from '../context/AuthContext'
+import { useSignupMutation } from '../redux/api/userApiSlice'
 
 const useSignup = () => {
-  const [loading, setLoading] = useState(false)
   const { setAuthUser } = useAuthContext()
+  const [signup, { isLoading }] = useSignupMutation()
 
-  const signup = async ({ fullName, username, password, confirmPassword, gender }) => {
+  const signUpUser = async ({ fullName, username, password, confirmPassword, gender }) => {
     const success = handleInputErrors({
       fullName,
       username,
@@ -15,35 +15,22 @@ const useSignup = () => {
       gender,
     })
     if (!success) return
-
-    setLoading(true)
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName,
-          username,
-          password,
-          confirmPassword,
-          gender,
-        }),
-      })
-
-      const data = await res.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
+      const data = await signup({
+        fullName,
+        username,
+        password,
+        gender,
+      }).unwrap()
+      if (data?.error) throw new Error(data?.error)
       localStorage.setItem('chat-user', JSON.stringify(data))
       setAuthUser(data)
     } catch (error) {
       toast.error(error.message)
-    } finally {
-      setLoading(false)
     }
   }
 
-  return { loading, signup }
+  return { isLoading, signUpUser }
 }
 
 export default useSignup

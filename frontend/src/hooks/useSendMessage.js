@@ -1,39 +1,28 @@
-import { useState } from 'react'
-import useConversation from '../zustand/conversationStore'
+import useStore from '../zustand/store'
 import toast from 'react-hot-toast'
+import { useSendMessageMutation } from '../redux/api/messageApiSlice'
 
 const useSendMessage = () => {
-  const [loading, setLoading] = useState(false)
-  const { messages, setMessages, selectedConversation } = useConversation()
+  const {messages, setMessages, selectedConversation } = useStore()
+  const [send, { isLoading }] = useSendMessageMutation()
 
   const sendMessage = async (message) => {
-    setLoading(true)
     try {
-      const res = await fetch(
-        `/api/messages/send/${selectedConversation._id}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message,
-            msgType: selectedConversation.group ? 'group' : 'one-on-one',
-          }),
-        }
-      )
-      const data = await res.json()
-      if (data.error) throw new Error(data.error)
+      const data = await send({
+        message,
+        msg_type: selectedConversation?.group ? 'group' : 'one-on-one',
+        conversation_id: selectedConversation?._id || selectedConversation?.user?._id
+      }).unwrap()
 
-      setMessages([...messages, data])
+      if (data?.error) throw new Error(data?.error)
+      if (data) setMessages([...messages, data])
     } catch (error) {
+      console.error(error)
       toast.error(error.message)
-    } finally {
-      setLoading(false)
     }
   }
 
-  return { sendMessage, loading }
+  return { sendMessage, isLoading }
 }
 
 export default useSendMessage

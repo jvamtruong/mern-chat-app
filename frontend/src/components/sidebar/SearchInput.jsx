@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FaSearchDollar } from 'react-icons/fa'
-import useConversation from '../../zustand/conversationStore'
+import useConversation from '../../zustand/store'
 import useGetConversations from '../../hooks/useGetConversations'
 import toast from 'react-hot-toast'
 

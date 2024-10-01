@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import useConversation from '../../zustand/conversationStore'
+import useConversation from '../../zustand/store'
 import { useState } from 'react'
 import Participants from './Participants'
 

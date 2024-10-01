@@ -12,7 +12,7 @@ const SignUp = () => {
     gender: '',
   })
 
-  const { loading, signup } = useSignup()
+  const { isLoading, signUpUser } = useSignup()
 
   const handleCheckboxChange = (gender) => {
     setInputs({ ...inputs, gender })
@@ -20,7 +20,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await signup(inputs)
+    await signUpUser(inputs)
   }
 
   return (
@@ -107,9 +107,9 @@ const SignUp = () => {
           <div>
             <button
               className='btn btn-block btn-sm mt-2 border border-slate-700'
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? (
+              {isLoading ? (
                 <span className='loading loading-spinner'></span>
               ) : (
                 'Sign Up'

@@ -1,8 +1,9 @@
 import { useAuthContext } from '../../context/AuthContext'
 import { extractTime } from '../../utils/extractTime'
-import useConversation from '../../zustand/conversationStore'
+import useConversation from '../../zustand/store'
 
 const Message = ({ message }) => {
+  // console.log('Message')
   const { authUser } = useAuthContext()
   const { selectedConversation } = useConversation()
   const fromMe = message.senderId === authUser._id
@@ -12,10 +13,8 @@ const Message = ({ message }) => {
     ? authUser.profilePic
     : selectedConversation?.profilePic
   const bubbleBgColor = fromMe ? 'bg-blue-500' : ''
-
   const shakeClass = message.shouldShake ? 'shake' : ''
 
-  console.log('Message')
   return (
     <div className={`chat ${chatClassName}`}>
       <div className='chat-image avatar'>

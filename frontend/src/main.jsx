@@ -5,15 +5,17 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthContextProvider } from './context/AuthContext.jsx'
 import { SocketContextProvider } from './context/SocketContext.jsx'
+import { ApiProvider } from '@reduxjs/toolkit/query/react'
+import { apiSlice } from './redux/api/apiSlice.js'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <>
-    <BrowserRouter>
+  <BrowserRouter>
+    <ApiProvider api={apiSlice}>
       <AuthContextProvider>
         <SocketContextProvider>
           <App />
         </SocketContextProvider>
       </AuthContextProvider>
-    </BrowserRouter>
-  </>
+    </ApiProvider>
+  </BrowserRouter>
 )

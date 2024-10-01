@@ -17,7 +17,6 @@ const conversationSchema = new mongoose.Schema(
     ],
     group: { type: Boolean, default: false },
     name: { type: String },
-    unseenMessages: { type: Number, default: 0 },
   },
   { timestamps: true }
 )
