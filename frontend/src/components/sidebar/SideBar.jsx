@@ -7,8 +7,8 @@ import SearchInput from './SearchInput'
 
 
 const Sidebar = () => {
-  // console.log('Sidebar')
-  const { conversations, setConversations, userLoading, groupLoading } = useGetConversations()
+  console.log('Sidebar')
+  const { userLoading, groupLoading } = useGetConversations()
 
   if (userLoading || groupLoading) {
     // console.log(`userLoading: ${userLoading}, groupLoading: ${groupLoading}`)
@@ -19,12 +19,9 @@ const Sidebar = () => {
     <div className='border-r border-slate-500 p-4 flex flex-col'>
       <SearchInput />
       <div className='divider px-3'></div>
-      <Conversations isLoading={userLoading & groupLoading} conversations={conversations} />
+      <Conversations isLoading={userLoading && groupLoading} />
       <div className='divider px-3'></div>
-      <CreateGroupConversationButton
-        conversations={conversations}
-        setConversations={setConversations}
-      />
+      <CreateGroupConversationButton />
       <div className='divider px-3'></div>
       <Profile />
       <LogoutButton />

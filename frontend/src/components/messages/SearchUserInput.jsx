@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import useConversation from '../../zustand/store'
+import useStore from '../../zustand/store'
 import { useState } from 'react'
 import Participants from './Participants'
+import { useGetAllUsersQuery } from '../../redux/api/userApiSlice'
 
 const SearchUserInput = () => {
-  const { selectedConversation } = useConversation()
+  const { selectedConversation } = useStore()
   const [search, setSearch] = useState('')
   const [participants, setParticipants] = useState([])
+  const { data } = useGetAllUsersQuery()
 
   useEffect(() => {
     setSearch('')
@@ -17,14 +19,11 @@ const SearchUserInput = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch('/api/users')
-      const data = await res.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-      const filtered = data.filter((user) =>
-        user.fullName.toLowerCase().includes(search.toLowerCase())
-      )
+      const filtered = data
+        .filter((item) =>
+          item.user.fullName.toLowerCase().includes(search.toLowerCase())
+        )
+        .map((item) => item.user)
       if (!filtered.length) {
         throw new Error('No results found')
       }

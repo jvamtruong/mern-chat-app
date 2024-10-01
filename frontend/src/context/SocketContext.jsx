@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react'
-import { useAuthContext } from './AuthContext'
 import io from 'socket.io-client'
+import useStore from '../zustand/store'
 
 const SocketContext = createContext()
 
@@ -11,7 +11,7 @@ export const useSocketContext = () => {
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null)
   const [onlineUsers, setOnlineUsers] = useState([])
-  const { authUser } = useAuthContext()
+  const { authUser } = useStore()
 
   useEffect(() => {
     if (authUser) {
@@ -20,9 +20,8 @@ export const SocketContextProvider = ({ children }) => {
           userId: authUser._id,
         },
       })
-
       setSocket(socket)
-      // socket.on() is used to listen to the events. can be used both on client and server side
+      // socket.on() is used to add listener to the specified event. can be used both on client and server side
       socket.on('getOnlineUsers', (users) => {
         setOnlineUsers(users)
       })

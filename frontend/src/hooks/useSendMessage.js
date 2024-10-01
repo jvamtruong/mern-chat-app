@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 import { useSendMessageMutation } from '../redux/api/messageApiSlice'
 
 const useSendMessage = () => {
-  const {messages, setMessages, selectedConversation } = useStore()
+  const { messages, setMessages, selectedConversation } = useStore()
   const [send, { isLoading }] = useSendMessageMutation()
 
   const sendMessage = async (message) => {
@@ -11,7 +11,8 @@ const useSendMessage = () => {
       const data = await send({
         message,
         msg_type: selectedConversation?.group ? 'group' : 'one-on-one',
-        conversation_id: selectedConversation?._id || selectedConversation?.user?._id
+        conversation_id:
+          selectedConversation?._id || selectedConversation?.user?._id,
       }).unwrap()
 
       if (data?.error) throw new Error(data?.error)

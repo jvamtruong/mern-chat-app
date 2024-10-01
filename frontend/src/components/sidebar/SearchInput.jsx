@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { FaSearchDollar } from 'react-icons/fa'
-import useConversation from '../../zustand/store'
-import useGetConversations from '../../hooks/useGetConversations'
 import toast from 'react-hot-toast'
+import useStore from '../../zustand/store'
 
-const SearchInput = ({ conversations }) => {
+const SearchInput = () => {
+  console.log('SearchInput') 
   const [search, setSearch] = useState('')
-  const { setSelectedConversation } = useConversation()
-  // const { conversations } = useGetConversations()
+  const { conversations, setSelectedConversation } = useStore()
 
   const handleSubmit = (e) => {
     e.preventDefault()

@@ -2,25 +2,42 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useGetAllGroupsQuery } from '../redux/api/conversationApiSlice'
 import { useGetAllUsersQuery } from '../redux/api/userApiSlice'
+import useStore from '../zustand/store'
 
 const useGetConversations = () => {
-  const [conversations, setConversations] = useState([])
+  console.log('useGetConversations')
+  const { setConversations } = useStore()
 
-  const { data: users, isLoading: userLoading } = useGetAllUsersQuery(null, {
+  const { data: users, isFetching: userLoading } = useGetAllUsersQuery(null, {
     refetchOnMountOrArgChange: true,
   })
 
-  const { data: groups, isLoading: groupLoading } = useGetAllGroupsQuery(null, {
-    refetchOnMountOrArgChange: true,
-  })
+  const { data: groups, isFetching: groupLoading } = useGetAllGroupsQuery(
+    null,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  )
+
+  // users = [
+  //   {
+  //     user,
+  //     conversation
+  //   }
+  // ]
+
+  // groups = [{ conversation }]
+
+  console.log('userLoading', userLoading)
+  console.log('groupLoading', groupLoading)
 
   useEffect(() => {
     try {
-      // console.log('sidebar effect')
+      console.log('sidebar effect')
       if (users?.error || groups?.error) {
         throw new Error(users?.error || groups?.error)
       }
-      if (users && groups) {
+      if (!userLoading && !groupLoading) {
         const sorted = [...users, ...groups].sort((a, b) => {
           return (
             new Date(b?.conversation?.updatedAt || b?.updatedAt) -
@@ -33,9 +50,9 @@ const useGetConversations = () => {
       console.error(error)
       toast.error(error.message)
     }
-  }, [users, groups])
+  }, [userLoading, groupLoading])
 
-  return { userLoading, groupLoading, conversations, setConversations }
+  return { userLoading, groupLoading }
 }
 
 export default useGetConversations

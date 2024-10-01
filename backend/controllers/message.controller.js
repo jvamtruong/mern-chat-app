@@ -24,11 +24,6 @@ export const sendMessage = async (req, res) => {
         receiverId: [id],
         message,
       })
-      const receiverSocketId = getReceiverSocketId(id)
-      if (receiverSocketId) {
-        // io.to(<socket_id>).emit() used to send events to specific client
-        io.to(receiverSocketId).emit('newMessage', newMessage)
-      }
     } else {
       conversation = await Conversation.findById(id)
       if (!conversation) {
@@ -42,9 +37,10 @@ export const sendMessage = async (req, res) => {
         message,
       })
     }
+
     conversation.messages.push(newMessage._id)
     conversation.unseenMessages = ++conversation.unseenMessages
-    await Promise.all([conversation.save(), newMessage.save()]) // run in parrellel
+    await Promise.all([newMessage.save(), conversation.save()])
 
     // SOCKET IO FUNCTIONALITY GOES HERE
 
@@ -54,20 +50,23 @@ export const sendMessage = async (req, res) => {
         // io.to(<socket_id>).emit() used to send events to specific client
         receiverSocketIds.forEach((socketId) => {
           io.to(socketId).emit('newMessage', newMessage)
-          io.to(socketId).emit('newNotification', newMessage)
+          io.to(socketId).emit('unseenMessages', newMessage.senderId)
+          io.to(socketId).emit('latestConversation', conversation)
         })
       }
     } else {
-      const receiverSocketIds = conversation.participants.map((participant) =>
-        getReceiverSocketId(participant.toString())
+      const receiverSocketIds = conversation.participants.map(
+        (participant) => getReceiverSocketId(participant.toString())
       )
-      for (let i = 0; i < receiverSocketIds.length; i++) {
-        if (receiverSocketIds[i]) {
-          receiverSocketIds[i].forEach((socketId) => {
+      receiverSocketIds.forEach((receiverSocketId) => {
+        if (receiverSocketId) {
+          receiverSocketId.forEach((socketId) => {
             io.to(socketId).emit('newMessage', newMessage)
+            io.to(socketId).emit('unseenMessages', newMessage.senderId)
+            io.to(socketId).emit('latestConversation', conversation)
           })
         }
-      }
+      })
     }
 
     res.status(201).json(newMessage)

@@ -12,6 +12,6 @@ const router = express.Router()
 router.get('/', protectRoute, getGroupChats)
 router.post('/create', protectRoute, createGroup)
 router.patch('/add-members/:group_id', protectRoute, addMemberToGroup)
-router.get('/unseen/:sender_id', protectRoute, getUnseenMessages)
+router.get('/unseen/:id', protectRoute, getUnseenMessages)
 
 export default router

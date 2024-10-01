@@ -2,19 +2,17 @@ import { useState, useEffect } from 'react'
 import { useSocketContext } from '../../context/SocketContext'
 import notificationSound from '../../assets/sounds/notification.mp3'
 import { useGetUnseenMessagesQuery } from '../../redux/api/messageApiSlice'
-import useConversationStore from '../../zustand/store'
+import useStore from '../../zustand/store'
 
-const Conversation = ({ conversation, lastIdx, emoji }) => {
+const Conversation = ({ conversation, lastIdx }) => {
   // console.log('Conversation')
-  const { selectedConversation, setSelectedConversation } =
-    useConversationStore()
-  const isSelected =
-    selectedConversation?._id === (conversation?._id || conversation?.user?._id)
+  const { selectedConversation, setSelectedConversation } = useStore()
+  const isSelected = selectedConversation?._id === (conversation?._id || conversation?.user?._id)
   const { onlineUsers, socket } = useSocketContext()
   const isOnline = onlineUsers.includes(conversation?.user?._id)
   const [unseenMessages, setUnseenMessages] = useState(0)
   const { data, isFetching } = useGetUnseenMessagesQuery(
-    conversation?.user?._id,
+    conversation?.user?._id || conversation?._id,
     { refetchOnMountOrArgChange: true }
   )
 
@@ -23,24 +21,20 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
   }, [isFetching])
 
   useEffect(() => {
-    // socket?.on("newMessage", (newMessage) => {
-    //   if (newMessage.senderId.toString() === conversation._id.toString()) {
-    //     // const sound = new Audio(notificationSound)
-    // 	  // sound.play()
-    //     setUnseenMessages(unseenMessages + 1)
-    //   }
-    // })
-    // console.log('conv effect')
-    socket?.on('newNotification', (newMessage) => {
-      if (newMessage.senderId.toString() === conversation._id.toString()) {
-        // const sound = new Audio(notificationSound)
-        // sound.play()
-        setUnseenMessages(unseenMessages + 1)
+    console.log('Conversation effect')
+    socket?.on('unseenMessages', (senderId) => {
+      console.log('unseenMessages')
+      if (senderId === conversation?.user?._id) {
+        const sound = new Audio(notificationSound)
+        sound.play()
+        setUnseenMessages(prev => prev + 1)
       }
     })
 
-    return () => socket?.off('newMessage')
-  })
+    return () => {
+      socket?.removeAllListeners('unseenMessages')
+    }
+  }, [socket])
 
   return (
     <>

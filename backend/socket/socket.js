@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
   }
 
   // more than one tab connected to the same account
-  if (userId != 'undefined') {
+  if (userId) {
     userSocketMap[userId].push(socket.id)
   }
 
