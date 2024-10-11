@@ -15,7 +15,7 @@ const conversationSchema = new mongoose.Schema(
         default: [],
       },
     ],
-    group: { type: Boolean, default: false },
+    isGroup: { type: Boolean, default: false },
     name: { type: String },
   },
   { timestamps: true }
