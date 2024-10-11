@@ -34,7 +34,7 @@ const Participant = ({ participant }: Props) => {
 
   const { mutate: deleteMember } = useMutation({
     mutationFn: (data: any) =>
-      axios.delete(
+      axios.patch(
         `${CONVERSATION_URL}/delete/${data.group_id}/${data.member_id}`
       ),
     onSuccess: ({ data }) => {
