@@ -5,6 +5,7 @@ import {
   createGroup,
   getGroupChats,
   getUnseenMessages,
+  deleteMemberFromGroup,
 } from '../controllers/conversation.controller.js'
 
 const router = express.Router()
@@ -12,6 +13,7 @@ const router = express.Router()
 router.get('/', protectRoute, getGroupChats)
 router.post('/create', protectRoute, createGroup)
 router.patch('/add-members/:group_id', protectRoute, addMemberToGroup)
+router.delete('/delete/:group_id/:member_id', protectRoute, deleteMemberFromGroup)
 router.get('/unseen/:id', protectRoute, getUnseenMessages)
 
 export default router
