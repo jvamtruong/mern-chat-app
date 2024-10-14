@@ -53,6 +53,7 @@ const Participant = ({ participant }: Props) => {
       participant_id: participant._id,
     })
   }
+  
   const handleDeleteMember = () => {
     deleteMember({
       group_id: (selectedConversation as Conversation)._id,

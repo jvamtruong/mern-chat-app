@@ -8,7 +8,7 @@ export const sendMessage = async (req, res) => {
     const { id } = req.params
     const senderId = req.user._id
 
-    let newMessage, conversation
+    let newMessage, conversation, realTimeMessage
     if (msg_type === 'direct') {
       conversation = await Conversation.findOne({
         isGroup: false,
@@ -24,6 +24,10 @@ export const sendMessage = async (req, res) => {
         receivers: [id],
         message,
       })
+      realTimeMessage = {
+        newMessage,
+        conversationId: conversation._id,
+      }
     } else {
       conversation = await Conversation.findById(id)
       if (!conversation) {
@@ -36,10 +40,13 @@ export const sendMessage = async (req, res) => {
         ),
         message,
       })
+      realTimeMessage = {
+        newMessage,
+        conversationId: conversation._id,
+      }
     }
 
     conversation.messages.push(newMessage._id)
-    conversation.unseenMessages = ++conversation.unseenMessages
     await Promise.all([newMessage.save(), conversation.save()])
 
     // SOCKET IO FUNCTIONALITY GOES HERE
@@ -49,7 +56,7 @@ export const sendMessage = async (req, res) => {
       if (receiverSocketIds) {
         // io.to(<socket_id>).emit() used to send events to specific client
         receiverSocketIds.forEach((socketId) => {
-          io.to(socketId).emit('newMessage', newMessage)
+          io.to(socketId).emit('newMessage', realTimeMessage)
           io.to(socketId).emit('unseenMessages', newMessage.sender._id)
           io.to(socketId).emit('latestConversation', conversation)
         })
@@ -61,8 +68,8 @@ export const sendMessage = async (req, res) => {
       receiverSocketIds.forEach((receiverSocketId) => {
         if (receiverSocketId) {
           receiverSocketId.forEach((socketId) => {
-            io.to(socketId).emit('newMessage', newMessage)
-            io.to(socketId).emit('unseenMessages', newMessage.sender)
+            io.to(socketId).emit('newMessage', realTimeMessage)
+            io.to(socketId).emit('unseenMessages', newMessage.sender._id)
             io.to(socketId).emit('latestConversation', conversation)
           })
         }

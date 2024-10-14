@@ -6,13 +6,11 @@ import useStore from '../../zustand/store'
 import toast from 'react-hot-toast'
 
 const LogoutButton = () => {
-  // console.log('LogoutButton')
   const queryClient = useQueryClient()
   const { setSelectedConversation } = useStore()
   const { mutate: logout, isPending} = useMutation({
     mutationFn: () => axios.post(`${AUTH_URL}/logout`),
     onSuccess: () => {
-      console.log('logged out successfully')
       // queryClient.invalidateQueries({ queryKey: ['authUser'] })
       queryClient.setQueryData(['authUser'], null)
       setSelectedConversation(null)

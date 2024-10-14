@@ -6,7 +6,6 @@ import toast from 'react-hot-toast'
 import { AUTH_URL } from '../../utils/constants'
 
 const Login = () => {
-  // console.log('Login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -15,8 +14,7 @@ const Login = () => {
   const { mutate: login, isPending } = useMutation({
     mutationFn: (data: { username: string; password: string }) =>
       axios.post(`${AUTH_URL}/login`, data),
-    onSuccess: (data) => {
-      console.log(data)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authUser'] })
     },
     onError: (error: any) => {

@@ -6,9 +6,7 @@ import useStore from '../../zustand/store'
 import { useQuery } from '@tanstack/react-query'
 
 const MessageContainer = () => {
-  // console.log('MessageContainer')
   const { selectedConversation } = useStore()
-  // console.log(selectedConversation?.fullName, selectedConversation?._id)
 
   return (
     <div className='md:min-w-[450px] flex flex-col'>

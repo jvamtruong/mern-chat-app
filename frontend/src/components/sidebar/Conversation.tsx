@@ -9,7 +9,6 @@ interface Props {
 }
 
 const Conversation = ({ conversation, lastIdx }: Props) => {
-  // console.log('Conversation')
   const { selectedConversation, setSelectedConversation } = useStore()
   const selectedConversationId =
     selectedConversation?.kind === 'DirectConversation'
@@ -20,14 +19,17 @@ const Conversation = ({ conversation, lastIdx }: Props) => {
     (conversation.kind === 'DirectConversation'
       ? conversation.receiver._id
       : conversation._id)
-  const { onlineUsers, socket } = useSocketContext()
-  const isOnline = onlineUsers.includes((conversation as DirectConversation)?.receiver?._id)
+  const socketContext = useSocketContext()
+  const socket = socketContext?.socket
+  const onlineUsers = socketContext?.onlineUsers
+
+  const isOnline = onlineUsers?.includes(
+    (conversation as DirectConversation)?.receiver?._id
+  )
   const [unseenMessages, setUnseenMessages] = useState(0)
 
   useEffect(() => {
-    console.log('Conversation effect')
     socket?.on('unseenMessages', (senderId: string) => {
-      console.log('unseenMessages')
       if (senderId === conversation?.receiver?._id) {
         const sound = new Audio(notificationSound)
         sound.play()
@@ -59,13 +61,14 @@ const Conversation = ({ conversation, lastIdx }: Props) => {
 
         <div className='flex flex-col flex-1'>
           <div className='flex gap-3 justify-between'>
-            <p className='font-bold text-gray-200'>
-              {conversation?.receiver?.fullName}
-            </p>
+            {conversation.kind === 'DirectConversation' && (
+              <p className='font-bold text-gray-200'>
+                {conversation?.receiver?.fullName}
+              </p>
+            )}
             <span className='text-base text-red-600 font-semibold'>
               {unseenMessages ? unseenMessages : ''}
             </span>
-            {/* <span className='text-xl'>{emoji}</span> */}
           </div>
         </div>
       </div>

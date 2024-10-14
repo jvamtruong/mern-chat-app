@@ -4,7 +4,6 @@ import toast from 'react-hot-toast'
 import useStore from '../../zustand/store'
 
 const SearchInput = () => {
-  console.log('SearchInput') 
   const [search, setSearch] = useState<string>('')
   const { conversations, setSelectedConversation } = useStore()
 

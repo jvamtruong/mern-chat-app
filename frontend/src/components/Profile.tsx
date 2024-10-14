@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
 const Profile = () => {
-  // console.log('Profile')
   const { data: authUser } = useQuery<User>({ queryKey: ['authUser'] })
 
   return (

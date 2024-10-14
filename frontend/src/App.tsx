@@ -8,7 +8,6 @@ import axios from 'axios'
 import { AUTH_URL } from './utils/constants'
 
 const App = () => {
-  // console.log('App')
   const { data: authUser } = useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {

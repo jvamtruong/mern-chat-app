@@ -6,7 +6,6 @@ import useStore from '../../zustand/store'
 import { MESSAGE_URL } from '../../utils/constants'
 
 const MessageInput = () => {
-  // console.log('message input')
   const [message, setMessage] = useState('')
   const { selectedConversation } = useStore()
   const queryClient = useQueryClient()
