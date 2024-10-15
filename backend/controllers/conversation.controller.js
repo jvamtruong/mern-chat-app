@@ -74,34 +74,21 @@ export const getGroupChats = async (req, res) => {
 
 export const getUnseenMessages = async (req, res) => {
   try {
-    const { id } = req.params
-    const { _id: receiver_id } = req.user
-
-    let conversation
-
-    conversation = await Conversation.findOne({
-      isGroup: false, // one-on-one
-      participants: { $all: [id, receiver_id] },
-    }).populate('messages')
-
-    let unseenMessages = 0
-
+    const { conversationId } = req.params
+    const conversation = await Conversation.findById(conversationId).populate('messages')
     if (!conversation) {
-      conversation = await Conversation.findById(id).populate('messages')
-      if (!conversation) {
-        return res.status(404).json({ message: 'conversation not found' })
-      }
-      const messages = conversation?.messages
-      for (let i = messages?.length - 1; i >= 0; i--) {
-        if (
-          messages[i].senderId.toString() !== receiver_id.toString() &&
-          messages[i].status === 'delivered'
-        ) {
-          unseenMessages++
-        } else break
-      }
+      return res.status(404).json({ message: 'conversation not found' })
     }
-
+    const unseenMessages = []
+    const messages = conversation?.messages
+    for (let i = messages?.length - 1; i >= 0; i--) {
+      if (
+        messages[i].sender.toString() !== req.user._id.toString() &&
+        messages[i].status === 'delivered'
+      ) {
+        unseenMessages.push(messages[i])
+      } else break
+    }
     res.status(200).json(unseenMessages)
   } catch (error) {
     console.error('error in getUnseenMessages controller:', error)

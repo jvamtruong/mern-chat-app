@@ -68,7 +68,7 @@ const Conversations = ({ conversations, isLoading }: Props) => {
               : conversation.receiver._id
           }
           conversation={conversation}
-          lastIdx={idx === conversations.length - 1}
+          isLastIdx={idx === conversations.length - 1}
         />
       ))}
 

@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react'
 import { useSocketContext } from '../../context/SocketContext'
 import notificationSound from '../../assets/sounds/notification.mp3'
 import useStore from '../../zustand/store'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { CONVERSATION_URL, MESSAGE_URL } from '../../utils/constants'
 
 interface Props {
   conversation: Conversation | DirectConversation
-  lastIdx: boolean
+  isLastIdx: boolean
 }
 
-const Conversation = ({ conversation, lastIdx }: Props) => {
+const Conversation = ({ conversation, isLastIdx }: Props) => {
   const { selectedConversation, setSelectedConversation } = useStore()
   const selectedConversationId =
     selectedConversation?.kind === 'DirectConversation'
@@ -26,16 +29,53 @@ const Conversation = ({ conversation, lastIdx }: Props) => {
   const isOnline = onlineUsers?.includes(
     (conversation as DirectConversation)?.receiver?._id
   )
-  const [unseenMessages, setUnseenMessages] = useState(0)
+  // const [unseenMessages, setUnseenMessages] = useState(0)
+  const conversationId =
+    conversation.kind === 'DirectConversation'
+      ? conversation.conversation._id
+      : conversation._id
+
+  const queryClient = useQueryClient()
+
+  const { data: unseenMessages } = useQuery({
+    queryKey: ['notifications', conversationId],
+    queryFn: async () => {
+      const res = await axios.get<Message[]>(
+        `${CONVERSATION_URL}/notifications/${conversationId}`
+      )
+      return res.data
+    },
+  })
+
+  const { mutate: markAsSeen } = useMutation({
+    mutationFn: (data: Message[] | undefined) =>
+      axios.patch(`${MESSAGE_URL}/mark-as-seen`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['notifications', conversationId],
+      })
+    },
+    onError: (error: any) => {
+      console.error(error.response.data.message)
+    },
+  })
 
   useEffect(() => {
-    socket?.on('unseenMessages', (senderId: string) => {
-      if (senderId === conversation?.receiver?._id) {
-        const sound = new Audio(notificationSound)
-        sound.play()
-        setUnseenMessages((prev) => prev + 1)
+    socket?.on(
+      'unseenMessages',
+      (data: { newMessage: Message; conversationId: string }) => {
+        if (conversationId === data.conversationId) {
+          const sound = new Audio(notificationSound)
+          sound.play()
+          queryClient.setQueryData(
+            ['notifications', conversationId],
+            (oldData: Message[]) => {
+              return [...oldData, data.newMessage]
+            }
+          )
+        }
       }
-    })
+    )
 
     return () => {
       socket?.removeAllListeners('unseenMessages')
@@ -45,35 +85,35 @@ const Conversation = ({ conversation, lastIdx }: Props) => {
   return (
     <>
       <div
-        className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
+        className={`flex justify-between gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
 				${isSelected ? 'bg-sky-500' : ''}
 			`}
         onClick={() => {
           setSelectedConversation(conversation)
-          setUnseenMessages(0)
+          if (unseenMessages?.length) {
+            markAsSeen(unseenMessages)
+          }
         }}
       >
-        <div className={`avatar ${isOnline ? 'online' : ''}`}>
-          <div className='w-12 rounded-full'>
-            <img src={conversation?.receiver?.profilePic} alt='user avatar' />
+        <div className='flex justify-center items-center gap-1'>
+          <div className={`avatar ${isOnline ? 'online' : ''}`}>
+            <div className='w-12 rounded-full'>
+              <img src={conversation?.receiver?.profilePic} alt='user avatar' />
+            </div>
           </div>
+          {conversation.kind === 'DirectConversation' && (
+            <p className='font-bold text-gray-200'>
+              {conversation?.receiver?.fullName}
+            </p>
+          )}
         </div>
 
-        <div className='flex flex-col flex-1'>
-          <div className='flex gap-3 justify-between'>
-            {conversation.kind === 'DirectConversation' && (
-              <p className='font-bold text-gray-200'>
-                {conversation?.receiver?.fullName}
-              </p>
-            )}
-            <span className='text-base text-red-600 font-semibold'>
-              {unseenMessages ? unseenMessages : ''}
-            </span>
-          </div>
-        </div>
+        <p className='text-base text-red-600 font-semibold'>
+          {unseenMessages?.length ? unseenMessages?.length : ''}
+        </p>
       </div>
 
-      {!lastIdx && <div className='divider my-0 py-0 h-1' />}
+      {!isLastIdx && <div className='divider my-0 py-0 h-1' />}
     </>
   )
 }

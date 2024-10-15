@@ -55,11 +55,8 @@ const Sidebar = () => {
           u = a.updatedAt
           v = b.kind === 'DirectConversation' ? b.conversation.updatedAt : b.updatedAt
         }
-
-        const aDate = new Date(u)
-        const bDate = new Date(v)
-
-        return bDate.getTime() - aDate.getTime()
+        
+        return new Date(v).getTime() - new Date(u).getTime()
       })
       setConversations(sorted)
     }

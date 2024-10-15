@@ -14,6 +14,6 @@ router.get('/', protectRoute, getGroupChats)
 router.post('/create', protectRoute, createGroup)
 router.patch('/add-members/:group_id', protectRoute, addMemberToGroup)
 router.patch('/delete/:group_id/:member_id', protectRoute, deleteMemberFromGroup)
-router.get('/unseen/:id', protectRoute, getUnseenMessages)
+router.get('/notifications/:conversationId', protectRoute, getUnseenMessages)
 
 export default router
