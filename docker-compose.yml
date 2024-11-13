@@ -13,7 +13,7 @@ services:
 
   backend:
     build: ./backend
-    # image: jvamtruong/chat-app-backend:1.0
+    # image: jvamtruong/chat-app-backend:1.1
     container_name: node-api
     ports:
       - 3000:3000
