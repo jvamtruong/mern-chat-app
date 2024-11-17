@@ -8,7 +8,7 @@ export const sendMessage = async (req, res) => {
     const { id } = req.params
     const senderId = req.user._id
 
-    let newMessage, conversation
+    let newMessage, conversation, realTimeMessage
     if (msg_type === 'direct') {
       conversation = await Conversation.findOne({
         isGroup: false,
@@ -24,6 +24,10 @@ export const sendMessage = async (req, res) => {
         receivers: [id],
         message,
       })
+      realTimeMessage = {
+        newMessage,
+        conversationId: conversation._id,
+      }
     } else {
       conversation = await Conversation.findById(id)
       if (!conversation) {
@@ -36,10 +40,13 @@ export const sendMessage = async (req, res) => {
         ),
         message,
       })
+      realTimeMessage = {
+        newMessage,
+        conversationId: conversation._id,
+      }
     }
 
     conversation.messages.push(newMessage._id)
-    conversation.unseenMessages = ++conversation.unseenMessages
     await Promise.all([newMessage.save(), conversation.save()])
 
     // SOCKET IO FUNCTIONALITY GOES HERE
@@ -49,20 +56,21 @@ export const sendMessage = async (req, res) => {
       if (receiverSocketIds) {
         // io.to(<socket_id>).emit() used to send events to specific client
         receiverSocketIds.forEach((socketId) => {
-          io.to(socketId).emit('newMessage', newMessage)
-          io.to(socketId).emit('unseenMessages', newMessage.sender._id)
+          io.to(socketId).emit('newMessage', realTimeMessage)
+          io.to(socketId).emit('unseenMessages', realTimeMessage)
           io.to(socketId).emit('latestConversation', conversation)
         })
       }
     } else {
-      const receiverSocketIds = conversation.participants.map((participant) =>
-        getReceiverSocketId(participant.toString())
-      )
+      const receiverSocketIds = conversation.participants
+        .filter((participant) => participant.toString() !== senderId.toString())
+        .map((participant) => getReceiverSocketId(participant.toString()))
+        
       receiverSocketIds.forEach((receiverSocketId) => {
         if (receiverSocketId) {
           receiverSocketId.forEach((socketId) => {
-            io.to(socketId).emit('newMessage', newMessage)
-            io.to(socketId).emit('unseenMessages', newMessage.sender)
+            io.to(socketId).emit('newMessage', realTimeMessage)
+            io.to(socketId).emit('unseenMessages', realTimeMessage)
             io.to(socketId).emit('latestConversation', conversation)
           })
         }
@@ -110,6 +118,26 @@ export const getMessages = async (req, res) => {
     res.status(200).json(conversation.messages)
   } catch (error) {
     console.error('error in getMessages controller', error)
+    res.status(500).json({ message: error.message })
+  }
+}
+
+export const markMessagesAsSeen = async (req, res) => {
+  try {
+    const unseenMessages = req.body
+    const unseenMessagesIds = unseenMessages.map((message) => message._id)
+    const messages = await Message.find({
+      _id: { $in: unseenMessagesIds },
+    })
+    await Promise.all(
+      messages.map((message) => {
+        message.status = 'seen'
+        return message.save()
+      })
+    )
+    res.status(200).json({ message: 'messages marked as seen' })
+  } catch (error) {
+    console.error('error in markMessagesAsSeen controller', error)
     res.status(500).json({ message: error.message })
   }
 }

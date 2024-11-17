@@ -10,7 +10,6 @@ import { useEffect } from 'react'
 import useStore from '../../zustand/store'
 
 const Sidebar = () => {
-  // console.log('Sidebar')
   const { conversations, setConversations } = useStore()
 
   const { data: users, isLoading: isUsersLoading } = useQuery({
@@ -38,7 +37,6 @@ const Sidebar = () => {
   })
 
   useEffect(() => {
-    console.log('sidebar effect')
     if (users && groups) {
       users.forEach((user) => {
         user.kind = 'DirectConversation'
@@ -46,7 +44,21 @@ const Sidebar = () => {
       groups.forEach((group) => {
         group.kind = 'Conversation'
       })
-      setConversations([...users, ...groups])
+      const sorted = [...users, ...groups].sort((a, b) => {
+        let u: string
+        let v: string
+
+        if (a.kind === 'DirectConversation') {
+          u = a.conversation.updatedAt
+          v = b.kind === 'DirectConversation' ? b.conversation.updatedAt : b.updatedAt
+        } else {
+          u = a.updatedAt
+          v = b.kind === 'DirectConversation' ? b.conversation.updatedAt : b.updatedAt
+        }
+        
+        return new Date(v).getTime() - new Date(u).getTime()
+      })
+      setConversations(sorted)
     }
   }, [users, groups])
 

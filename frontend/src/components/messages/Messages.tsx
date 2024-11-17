@@ -8,9 +8,7 @@ import axios from 'axios'
 import { MESSAGE_URL } from '../../utils/constants'
 
 const Messages = () => {
-  // console.log('Messages')
   const { selectedConversation } = useStore()
-  console.log(selectedConversation)
 
   const type =
     selectedConversation?.kind === 'DirectConversation' ? 'direct' : 'group'
@@ -31,17 +29,10 @@ const Messages = () => {
     },
   })
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setMessages(data)
-  //   }
-  // }, [data])
-
   useListenMessages(selectedConversation)
   const lastMessageRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    console.log('last effect', messages)
     setTimeout(() => {
       lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, 100)
@@ -51,7 +42,7 @@ const Messages = () => {
     <div className='px-4 flex-1 overflow-auto'>
       {!isLoading &&
         (messages?.length ?? 0) > 0 &&
-        messages?.map((message) => (
+        messages?.map((message: Message) => (
           <div
             key={message._id}
             ref={lastMessageRef as RefObject<HTMLDivElement>}

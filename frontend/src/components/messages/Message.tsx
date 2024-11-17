@@ -7,10 +7,9 @@ interface Props {
 }
 
 const Message = ({ message }: Props) => {
-  console.log('Message')
+  // console.log('Message')
   const { data: authUser } = useQuery<User>({ queryKey: ['authUser'] })
   const { selectedConversation } = useStore()
-  console.log(message.sender._id, authUser?._id)
   const fromMe = message.sender._id === authUser?._id
   const formattedTime = extractTime(message.createdAt)
   const chatClassName = fromMe ? 'chat-end' : 'chat-start'

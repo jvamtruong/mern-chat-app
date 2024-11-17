@@ -1,43 +1,50 @@
 import { useEffect } from 'react'
 import { useSocketContext } from '../context/SocketContext'
-import useStore from '../zustand/store'
 import notificationSound from '../assets/sounds/notification.mp3'
+import { useQueryClient } from '@tanstack/react-query'
 
-const useListenMessages = (selectedConversation) => {
-  console.log('useListenMessages')
-  const { socket } = useSocketContext()
-  const { messages, setMessages } = useStore()
+const useListenMessages = (
+  selectedConversation: DirectConversation | Conversation | null
+) => {
+  const socketContext = useSocketContext()
+  const socket = socketContext?.socket
+
+  const queryClient = useQueryClient()
 
   useEffect(() => {
-    console.log('Messages socket effect')
-    socket?.on('newMessage', (newMessage) => {
-      console.log('newMessage')
-      newMessage.shouldShake = true
-      const sound = new Audio(notificationSound)
-      sound.play()
-      console.log('messages', messages)
-      console.log('newMessage', newMessage)
-      console.log('selectedConversation', selectedConversation)
-      // if (
-      //   newMessage.senderId === selectedConversation?._id ||
-      //   selectedConversation?.participants?.some(
-      //     (participant) => participant._id === newMessage.senderId
-      //   )
-      // ) {
-      //   setMessages([...messages, newMessage])
-      // }
-      if (
-        selectedConversation?.messages?.includes(newMessage) ||
-        newMessage.senderId === selectedConversation?._id
-      ) {
-        setMessages([...messages, newMessage])
+    socket?.on(
+      'newMessage',
+      (data: { newMessage: Message; conversationId: string }) => {
+        data.newMessage.shouldShake = true
+        const sound = new Audio(notificationSound)
+        sound.play()
+
+        if (selectedConversation?.kind === 'DirectConversation') {
+          if (data.conversationId === selectedConversation.conversation._id) {
+            queryClient.setQueryData(
+              ['messages', 'direct', selectedConversation?.receiver?._id],
+              (oldMessages: any) => {
+                return [...oldMessages, data.newMessage]
+              }
+            )
+          }
+        } else {
+          if (data.conversationId === selectedConversation?._id) {
+            queryClient.setQueryData(
+              ['messages', 'group', selectedConversation?._id],
+              (oldMessages: any) => {
+                return [...oldMessages, data.newMessage]
+              }
+            )
+          }
+        }
       }
-    })
+    )
 
     return () => {
       socket?.removeAllListeners('newMessage')
     }
-  }, [socket, messages])
+  }, [socket])
 }
 
 export default useListenMessages

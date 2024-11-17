@@ -10,7 +10,6 @@ lerna-debug.log*
 testAPI.rest
 backup
 useCustomState.js
-.env
 Test.jsx
 backup
 node_modules

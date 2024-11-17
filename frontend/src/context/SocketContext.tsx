@@ -1,32 +1,30 @@
 import { createContext, useState, useEffect, useContext } from 'react'
 import io, { Socket } from 'socket.io-client'
-import useStore from '../zustand/store'
 import { useQuery } from '@tanstack/react-query'
 
-interface ISocketContext {
+interface SocketContextType {
   socket: Socket | null
   onlineUsers: string[]
 }
 
-const SocketContext = createContext<ISocketContext | null>(null)
+interface Props {
+  children: React.ReactNode
+}
+
+const SocketContext = createContext<SocketContextType | null>(null)
 
 export const useSocketContext = () => {
   return useContext(SocketContext)
 }
 
-export const SocketContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+export const SocketProvider = ({ children }: Props) => {
   const [socket, setSocket] = useState<Socket | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
-  // const { authUser } = useStore()
-  const { data: authUser } = useQuery({ queryKey: ['authUser'] })
+  const { data: authUser } = useQuery<User>({ queryKey: ['authUser'] })
 
-  useEffect(() => {
+  useEffect((): any => {
     if (authUser) {
-      const socket = io('http://localhost:3000', {
+      const socket: Socket = io('http://localhost:3000', {
         query: {
           userId: authUser._id,
         },
@@ -37,7 +35,9 @@ export const SocketContextProvider = ({
         setOnlineUsers(users)
       })
 
-      return () => socket.close()
+      return () => {
+        socket.close()
+      }
     } else {
       if (socket) {
         socket.close()

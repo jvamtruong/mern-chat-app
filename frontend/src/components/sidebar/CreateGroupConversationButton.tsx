@@ -4,7 +4,6 @@ import { CONVERSATION_URL } from '../../utils/constants'
 import axios from 'axios'
 
 const CreateGroupConversationButton = () => {
-  // console.log('CreateGroupConversationButton')
   const queryClient = useQueryClient()
 
   const { mutate: createGroup } = useMutation({

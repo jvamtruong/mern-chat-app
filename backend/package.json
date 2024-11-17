@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "back": "nodemon backend/index.js",
-    "front": "cd frontend && npm run dev"
+    "server": "nodemon index.js"
   },
   "keywords": [],
   "type": "module",
