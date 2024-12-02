@@ -22,8 +22,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./backend:/app/backend
-      - /app/backend/node_modules
+      - ./backend:/app
+      - /app/node_modules
     networks:
       - mern-networks
 
@@ -36,8 +36,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
+      - ./frontend:/app
+      - /app/node_modules
     networks:
       - mern-networks
 

@@ -1,15 +1,8 @@
 FROM node:18-alpine
-
-WORKDIR /app/backend
-
-RUN npm install -g nodemon
-
+WORKDIR /app
 COPY package*.json .
-
 RUN npm install
-
 COPY . .
-
+RUN npm run build
 EXPOSE 3000
-
-CMD ["npm", "run", "server"]
+CMD ["npm", "run", "start"]

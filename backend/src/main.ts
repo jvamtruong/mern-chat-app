@@ -1,14 +1,14 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import authRoutes from './routes/auth.routes.js'
-import messageRoutes from './routes/message.routes.js'
-import userRoutes from './routes/user.routes.js'
-import conversationRoutes from './routes/conversation.routes.js'
-import connectToMongoDB from './db/connectToMongoDB.js'
+import authRoutes from './routes/auth.routes'
+import messageRoutes from './routes/message.routes'
+import userRoutes from './routes/user.routes'
+import conversationRoutes from './routes/conversation.routes'
+import connectToMongoDB from './db/connectToMongoDB'
 import cookieParser from 'cookie-parser'
-import { app, server } from './socket/socket.js'
+import { app, server } from './socket/socket'
 import swaggerUI from 'swagger-ui-express'
-import swaggerSpec from './utils/swagger.js'
+import swaggerSpec from './utils/swagger'
 
 dotenv.config()
 const PORT = process.env.PORT || 3000

@@ -1,22 +1,28 @@
-import User from '../models/user.model.js'
+import User from '../models/user.model'
 import bcrypt from 'bcryptjs'
-import generateTokenAndSetCookie from '../utils/generateToken.js'
+import generateTokenAndSetCookie from '../utils/generateToken'
+import { Request, Response } from 'express'
 
-export const getCurrentUser = (req, res) => {
+export const getCurrentUser = async (req: Request, res: Response) => {
   try {
-    res.json(req.user)
+    const user = await User.findById(req.userId).select('-password')
+    res.json(user)
   } catch (error) {
     console.error('error in getCurrentUser controller', error)
     res.status(500).json({ message: error.message })
   }
 }
 
-export const signup = async (req, res) => {
+export const signup = async (
+  req: Request<{}, {}, { fullName: string; username: string; password: string; gender: string }>,
+  res: Response
+) => {
   try {
     const { fullName, username, password, gender } = req.body
     const user = await User.findOne({ username })
     if (user) {
-      return res.status(400).json({ message: 'user already exists' })
+      res.status(400).json({ message: 'user already exists' })
+      return
     }
 
     // hash password
@@ -35,7 +41,7 @@ export const signup = async (req, res) => {
     })
 
     if (newUser) {
-      generateTokenAndSetCookie(newUser._id, res)
+      generateTokenAndSetCookie(newUser._id.toString(), res)
       await newUser.save()
       res.status(201).json({
         _id: newUser._id,
@@ -50,7 +56,7 @@ export const signup = async (req, res) => {
   }
 }
 
-export const login = async (req, res) => {
+export const login = async (req: Request<{}, {}, { username: string; password: string }>, res: Response) => {
   try {
     const { username, password } = req.body
     const user = await User.findOne({ username })
@@ -60,9 +66,10 @@ export const login = async (req, res) => {
     )
     if (!user || !isPasswordCorrect) {
       console.error('invalid username or password')
-      return res.status(400).json({ message: 'invalid username or password' })
+      res.status(400).json({ message: 'invalid username or password' })
+      return
     }
-    generateTokenAndSetCookie(user._id, res)
+    generateTokenAndSetCookie(user._id.toString(), res)
     res.status(200).json({
       _id: user._id,
       fullName: user.fullName,
@@ -75,7 +82,7 @@ export const login = async (req, res) => {
   }
 }
 
-export const logout = (req, res) => {
+export const logout = (req: Request, res: Response) => {
   try {
     res.clearCookie('token')
     res.status(200).json({ message: 'logged out successfully' })

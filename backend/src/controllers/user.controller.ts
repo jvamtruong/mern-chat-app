@@ -1,9 +1,10 @@
-import User from '../models/user.model.js'
-import Conversation from '../models/conversation.model.js'
+import User from '../models/user.model'
+import Conversation from '../models/conversation.model'
+import { Request, Response } from 'express'
 
-export const getUsersForSideBar = async (req, res) => {
+export const getUsersForSideBar = async (req: Request, res: Response) => {
   try {
-    const loggedInUserId = req.user._id
+    const loggedInUserId = req.userId
     const users = await User.find({ _id: { $ne: loggedInUserId } }).select(
       '-password'
     )

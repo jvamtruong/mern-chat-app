@@ -1,12 +1,12 @@
 import express from 'express'
-import protectRoute from '../middleware/protectRoute.js'
+import protectRoute from '../middleware/protectRoute'
 import {
   addMemberToGroup,
   createGroup,
   getGroupChats,
   getUnseenMessages,
   deleteMemberFromGroup,
-} from '../controllers/conversation.controller.js'
+} from '../controllers/conversation.controller'
 
 const router = express.Router()
 

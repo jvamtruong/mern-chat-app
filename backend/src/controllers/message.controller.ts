@@ -1,12 +1,16 @@
-import Conversation from '../models/conversation.model.js'
-import Message from '../models/message.model.js'
-import { getReceiverSocketId, io } from '../socket/socket.js'
+import Conversation from '../models/conversation.model'
+import Message from '../models/message.model'
+import { getReceiverSocketId, io } from '../socket/socket'
+import { Request, Response } from 'express'
 
-export const sendMessage = async (req, res) => {
+export const sendMessage = async (
+  req: Request<{ id: string }, {}, { message: string; msg_type: string }>,
+  res: Response
+) => {
   try {
     const { message, msg_type } = req.body
     const { id } = req.params
-    const senderId = req.user._id
+    const senderId = req.userId
 
     let newMessage, conversation, realTimeMessage
     if (msg_type === 'direct') {
@@ -31,7 +35,8 @@ export const sendMessage = async (req, res) => {
     } else {
       conversation = await Conversation.findById(id)
       if (!conversation) {
-        return res.status(404).json({ message: 'conversation not found' })
+        res.status(404).json({ message: 'conversation not found' })
+        return
       }
       newMessage = new Message({
         sender: senderId,
@@ -65,7 +70,7 @@ export const sendMessage = async (req, res) => {
       const receiverSocketIds = conversation.participants
         .filter((participant) => participant.toString() !== senderId.toString())
         .map((participant) => getReceiverSocketId(participant.toString()))
-        
+
       receiverSocketIds.forEach((receiverSocketId) => {
         if (receiverSocketId) {
           receiverSocketId.forEach((socketId) => {
@@ -84,16 +89,18 @@ export const sendMessage = async (req, res) => {
   }
 }
 
-export const getMessages = async (req, res) => {
+export const getMessages = async (
+  req: Request<{ id: string; type: string }>,
+  res: Response
+) => {
   try {
-    const { id, type } = req.params // string
-    const senderId = req.user._id // ObjectId
+    const { id, type } = req.params
+    const senderId = req.userId
 
     //if (userToChatId == senderId) return res.status(400).json({ msg: 'cannot send messages to yourself' })
-    if (id === senderId.toString()) {
-      return res
-        .status(400)
-        .json({ message: 'cannot send messages to yourself' })
+    if (id === senderId) {
+      res.status(400).json({ message: 'cannot send messages to yourself' })
+      return
     }
 
     let conversation
@@ -113,7 +120,10 @@ export const getMessages = async (req, res) => {
       })
     }
 
-    if (!conversation) return res.status(200).json([])
+    if (!conversation) {
+      res.status(200).json([])
+      return
+    }
 
     res.status(200).json(conversation.messages)
   } catch (error) {
@@ -122,7 +132,10 @@ export const getMessages = async (req, res) => {
   }
 }
 
-export const markMessagesAsSeen = async (req, res) => {
+export const markMessagesAsSeen = async (
+  req: Request<{}, {}, any>,
+  res: Response
+) => {
   try {
     const unseenMessages = req.body
     const unseenMessagesIds = unseenMessages.map((message) => message._id)
