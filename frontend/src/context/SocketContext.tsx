@@ -22,9 +22,14 @@ export const SocketProvider = ({ children }: Props) => {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
   const { data: authUser } = useQuery<User>({ queryKey: ['authUser'] })
 
-  useEffect((): any => {
+  const URL =
+    import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_BACKEND_URL_DEV
+      : import.meta.env.VITE_BACKEND_URL_PROD
+
+  useEffect(() => {
     if (authUser) {
-      const socket: Socket = io('http://localhost:3000', {
+      const socket: Socket = io(URL, {
         query: {
           userId: authUser._id,
         },

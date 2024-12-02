@@ -1,7 +1,7 @@
 import express from 'express'
-import { sendMessage, getMessages } from '../controllers/message.controller.js'
-import protectRoute from '../middleware/protectRoute.js'
-import { markMessagesAsSeen } from '../controllers/message.controller.js'
+import { sendMessage, getMessages } from '../controllers/message.controller'
+import protectRoute from '../middleware/protectRoute'
+import { markMessagesAsSeen } from '../controllers/message.controller'
 
 const router = express.Router()
 

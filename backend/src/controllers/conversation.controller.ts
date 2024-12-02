@@ -1,11 +1,15 @@
-import Conversation from '../models/conversation.model.js'
+import Conversation from '../models/conversation.model'
+import { Request, Response } from 'express'
+import User from '../models/user.model'
+import mongoose from 'mongoose'
 
-export const createGroup = async (req, res) => {
+export const createGroup = async (req: Request, res: Response) => {
   try {
+    const user = await User.findById(req.userId)
     const newGroup = await Conversation.create({
-      participants: [req.user._id],
+      participants: [user._id],
       isGroup: true,
-      name: req.user.fullName + ', ',
+      name: user.fullName + ', ',
     })
     res.status(201).json(newGroup)
   } catch (error) {
@@ -14,19 +18,22 @@ export const createGroup = async (req, res) => {
   }
 }
 
-export const addMemberToGroup = async (req, res) => {
+export const addMemberToGroup = async (
+  req: Request<{ group_id: string }, {}, { participant_id: string }>,
+  res: Response
+) => {
   try {
     const { group_id } = req.params
     const { participant_id } = req.body
     const conversation = await Conversation.findById(group_id)
+    const participant_obj_id = new mongoose.Types.ObjectId(participant_id)
 
-    if (conversation.participants.includes(participant_id)) {
-      return res
-        .status(400)
-        .json({ message: 'this member is already in this group' })
+    if (conversation.participants.includes(participant_obj_id)) {
+      res.status(400).json({ message: 'this member is already in this group' })
+      return
     }
 
-    conversation.participants.push(participant_id)
+    conversation.participants.push(participant_obj_id)
     await conversation.save()
     await conversation.populate({ path: 'participants', select: '-password' })
 
@@ -37,12 +44,16 @@ export const addMemberToGroup = async (req, res) => {
   }
 }
 
-export const deleteMemberFromGroup = async (req, res) => {
+export const deleteMemberFromGroup = async (
+  req: Request<{ group_id: string; member_id: string }>,
+  res: Response
+) => {
   try {
     const { group_id, member_id } = req.params
     const conversation = await Conversation.findById(group_id)
     if (!conversation) {
-      return res.status(404).json({ message: 'conversation not found' })
+      res.status(404).json({ message: 'conversation not found' })
+      return
     }
     conversation.participants = conversation.participants.filter(
       (participant) => participant.toString() !== member_id
@@ -56,12 +67,12 @@ export const deleteMemberFromGroup = async (req, res) => {
   }
 }
 
-export const getGroupChats = async (req, res) => {
+export const getGroupChats = async (req: Request, res: Response) => {
   try {
     // only the members of the group can see these group conversations
     const conversations = await Conversation.find({
       isGroup: true,
-      participants: { $all: [req.user._id] },
+      participants: { $all: [req.userId] },
     })
       .populate('participants')
       .select('-password')
@@ -72,18 +83,24 @@ export const getGroupChats = async (req, res) => {
   }
 }
 
-export const getUnseenMessages = async (req, res) => {
+export const getUnseenMessages = async (
+  req: Request<{ conversationId: string }>,
+  res: Response
+) => {
   try {
     const { conversationId } = req.params
-    const conversation = await Conversation.findById(conversationId).populate('messages')
+    const conversation = await Conversation.findById(conversationId).populate(
+      'messages'
+    )
     if (!conversation) {
-      return res.status(404).json({ message: 'conversation not found' })
+      res.status(404).json({ message: 'conversation not found' })
+      return
     }
     const unseenMessages = []
-    const messages = conversation?.messages
+    const messages: any = conversation?.messages
     for (let i = messages?.length - 1; i >= 0; i--) {
       if (
-        messages[i].sender.toString() !== req.user._id.toString() &&
+        messages[i].sender.toString() !== req.userId &&
         messages[i].status === 'delivered'
       ) {
         unseenMessages.push(messages[i])

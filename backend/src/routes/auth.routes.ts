@@ -4,8 +4,8 @@ import {
   logout,
   signup,
   getCurrentUser,
-} from '../controllers/auth.controller.js'
-import protectRoute from '../middleware/protectRoute.js'
+} from '../controllers/auth.controller'
+import protectRoute from '../middleware/protectRoute'
 
 const router = express.Router()
 
